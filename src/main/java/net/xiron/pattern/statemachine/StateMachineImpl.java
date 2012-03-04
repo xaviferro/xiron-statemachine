@@ -54,7 +54,7 @@ public class StateMachineImpl implements StateMachine {
 	    return false;
 	}
 	
-	@Override public void defineEvent(String event) {
+	@Override public synchronized void defineEvent(String event) {
 	    if (event == null)
 	        throw new IllegalArgumentException("Can not define an event with null value");
 	    
@@ -63,7 +63,7 @@ public class StateMachineImpl implements StateMachine {
 	        l.debug("#defineEvent succeed for event id " + event);
 	}
 	
-	@Override public void defineState(String state) {
+	@Override public synchronized void defineState(String state) {
 	    if (state == null)
             throw new IllegalArgumentException("Can not define a state with null value");
 	    
@@ -74,7 +74,7 @@ public class StateMachineImpl implements StateMachine {
             l.debug("#defineState succeed for state id " + state);
 	}
 	
-	@Override public void setStartState(String state) throws StateNotDefinedException {
+	@Override public synchronized void setStartState(String state) throws StateNotDefinedException {
         if (!states.containsKey(state))
             throw new StateNotDefinedException("Can not set start state to " + state + " as is not already defined");
         
@@ -85,7 +85,7 @@ public class StateMachineImpl implements StateMachine {
             l.debug("#setStartState succeed with state id " + state);
     }
 
-    @Override public void defineTransition(String sourceState, String targetState, String event) 
+    @Override public synchronized void defineTransition(String sourceState, String targetState, String event) 
         throws StateNotDefinedException, EventNotDefinedException 
     {
         if (!states.containsKey(sourceState))

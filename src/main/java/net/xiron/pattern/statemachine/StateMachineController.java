@@ -20,13 +20,14 @@ package net.xiron.pattern.statemachine;
  * @link{#phaseTransition} one.
  * 
  * They are executed sequentially:
- * - First, the method @link{#phaseExitState} is executed. Allows cancelling the transition.
- * - Second, the method @link{#phaseTransition} is executed. 
- * - And third, the method @link{#phaseEnterState} is executed. It allows forcing another
- *   event to be processed without releasing the lock. This might be useful for some
- *   circumstances (specially ghost-like condition states that we need to check a lot of
- *   conditions for performing other actions)
- *                      
+ * <ul>
+ * <li>First, the method @link{#phaseExitState} is executed. Allows cancelling the transition.</li>
+ * <li>Second, the method @link{#phaseTransition} is executed. </li>
+ * <li>And third, the method @link{#phaseEnterState} is executed. It allows forcing another
+ *     event to be processed without releasing the lock. This might be useful for some
+ *     circumstances (specially ghost-like condition states that we need to check a lot of
+ *     conditions for performing other actions)</li>
+ * </ul>                     
  * @author xavi.ferro
  */
 
