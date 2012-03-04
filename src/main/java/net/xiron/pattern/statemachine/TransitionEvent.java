@@ -17,6 +17,14 @@ package net.xiron.pattern.statemachine;
 
 import java.util.HashMap;
 
+/**
+ * Contains the transition's information. Besides the basic information (source,
+ * target and event), we provide the object passed when processing the event and
+ * a transition context map which is really helpful when we need to store information
+ * between phases of the same transition.
+ * 
+ * @author xavi.ferro
+ */
 public class TransitionEvent {
     private String source;
     private String target;

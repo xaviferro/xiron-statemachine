@@ -27,7 +27,8 @@ import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 
 /**
- * @Lock{this}
+ * Basic state machine implementation. Implements a non-reentrant transition
+ * strategy.
  * 
  * @author xavi.ferro
  */
@@ -116,13 +117,10 @@ public class StateMachineImpl implements StateMachine {
         return target;
     }
     
-    /*
+    /**
      * TODO. We could extract this functionality and apply a Strategy pattern. It would allow
      * us to have different implementations (NonReentrant, Reentrant -with a queue of things-),
      * or just set up a flag when starting. For the time being, we keep the NonReentrant one.
-     * 
-     * Allowing the user to choose between strategies might impact in the interface as this
-     * method -returns a boolean- wouldn't make much sense (sometimes the transition would be enqueued)
      * 
      * @see net.xiron.pattern.statemachine.StateMachine#processEvent(java.lang.String, java.lang.Object)
      */
