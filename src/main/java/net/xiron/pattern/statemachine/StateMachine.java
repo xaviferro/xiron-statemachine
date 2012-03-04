@@ -30,11 +30,13 @@ import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
  * - Using the lock guarantees no other thread will be in the critical section.
  *   But, what about the same thread? It might be possible to process an event while
  *   processing another event. We want to avoid that because it might cause inconsistencies.
- *   . But we are forcing almost the same 
- *   restriction for the thread that owns the lock. It is only allowed during the 
- *   enter state phase, using the @link{StateMachineController#phaseEnterState}
- *   mechanism
- * - We want to avoid listener reentrance. So, during a transition, trying to
+ *   So, if we define the flag {@link #allowsReentrantTransitions} to false we are forcing
+ *   the state machine to prevent that situation.
+ * - If {@link #allowsReentrantTransition} is set to false -the only one supported now-,
+ *   we are forcing the state machine to guarantee that one and only thread is allowed
+ *   to perform transitions at a time. The same thread is not allowed to perform more
+ *   transitions during the transition. You might use the {@link StateMachineController#phaseEnterState}
+ *   mechanism for forwarding
  * 
  * Invariant.
  * - We only allow one transition at a time with the lock.
@@ -112,6 +114,9 @@ public interface StateMachine {
     public void processEvent(String event, Object object) 
         throws ReentrantTransitionNotAllowed, EventNotDefinedException, TransitionNotDefinedException;
     
+    /**
+     * Returns the current state of the state machine.
+     */
     public String getCurrentState();
     
     /**
