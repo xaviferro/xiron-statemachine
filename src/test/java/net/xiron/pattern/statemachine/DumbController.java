@@ -33,22 +33,19 @@ public class DumbController implements StateMachineController {
         this.phaseExit = phaseExit;
     }
     
-    @Override
-    public boolean phaseExitState(TransitionEvent evt) {
+    @Override public boolean phaseExitState(TransitionEvent evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseExitState: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
         
         return phaseExit;
     }
 
-    @Override
-    public void phaseTransition(TransitionEvent evt) {
+    @Override public void phaseTransition(TransitionEvent evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseTransition: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
     }
 
-    @Override
-    public PhaseEnterResult phaseEnterState(TransitionEvent evt) {
+    @Override public PhaseEnterResult phaseEnterState(TransitionEvent evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseEnterState: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
         

@@ -130,18 +130,24 @@ public class StateMachineImpl implements StateMachine {
         if (!events.contains(event))
             throw new EventNotDefinedException("Event " + event + " not defined");
         
-        if (inTransition) {
-            /*
-             * We do not need to check whether the sm allows reentrance or not. If inTransition
-             * has been set to true, it is reentrant -we won't never modify its value though-.
-             */
-            throw new ReentrantTransitionNotAllowed("Reentrance from the same thread is not allowed");
-        }
-        else {
-            if (!allowsReentrantTransitions()) {
-                inTransition = true;
+        /*if (!allowsReentrantTransitions()) {
+            if (inTransition) {
+                throw new ReentrantTransitionNotAllowed("Reentrance from the same thread is not allowed");
             } else {
-                // TODO. Do the reentrant approach!
+                inTransition = true;
+            }
+        } else {
+            if (inTransition) {
+                // We add the item into the queue
+            } else {
+                inTransition = true;
+            }
+        }*/
+        if (!allowsReentrantTransitions()) {
+            if (inTransition) {
+                throw new ReentrantTransitionNotAllowed("Reentrance from the same thread is not allowed");
+            } else {
+                inTransition = true;
             }
         }
         
