@@ -16,6 +16,7 @@
 package net.xiron.pattern.statemachine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
@@ -39,7 +40,7 @@ public class ReentrantStateMachine implements StateMachine {
     
     public ReentrantStateMachine() {
         this.proxiedStateMachine = new StateMachineImpl();
-        this.transitionQueue = new ArrayList<TransitionEvent> ();
+        this.transitionQueue = Collections.synchronizedList(new ArrayList<TransitionEvent> ());
     }
     
     @Override public boolean allowsReentrantTransitions() {
@@ -70,28 +71,33 @@ public class ReentrantStateMachine implements StateMachine {
         if (!this.proxiedStateMachine.isEvent(event))
             throw new EventNotDefinedException("Event " + event + " not defined");
         
-        synchronized (proxiedStateMachine) {   
-            this.transitionQueue.add(new TransitionEvent(null, event, null, object));
-    
+        this.transitionQueue.add(new TransitionEvent(null, event, null, object));
+        
+        boolean goOn = false;
+        synchronized (transitionQueue) {
             if (!inTransition) {
-                try {
-                    inTransition = true;
-                    do {
-                        TransitionEvent te = this.transitionQueue.remove(0);
-                        this.proxiedStateMachine.processEvent(te.getEvent(), te.getObject());
-                    } while (!this.transitionQueue.isEmpty());
-                } catch (ReentrantTransitionNotAllowed t) {
-                    throw t;
-                } catch (EventNotDefinedException t) {
-                    throw t;
-                } catch (TransitionNotDefinedException t) {
-                    throw t;
-                } finally {
-                    inTransition = false;
-                }
-            } else {
-                l.debug("#processEvent: enqueuing request. size is " + transitionQueue.size());
+                inTransition = true;
+                goOn = true;
             }
+        }
+        
+        if (goOn) {
+            try {
+                do {
+                    TransitionEvent te = this.transitionQueue.remove(0);
+                    this.proxiedStateMachine.processEvent(te.getEvent(), te.getObject());
+                } while (!this.transitionQueue.isEmpty());
+            } catch (ReentrantTransitionNotAllowed t) {
+                throw t;
+            } catch (EventNotDefinedException t) {
+                throw t;
+            } catch (TransitionNotDefinedException t) {
+                throw t;
+            } finally {
+                inTransition = false;
+            }
+        } else {
+            l.debug("#processEvent: enqueuing request. size is " + transitionQueue.size());
         }
     }
     
