@@ -54,6 +54,14 @@ public class StateMachineImpl implements StateMachine {
 	    return false;
 	}
 	
+	public boolean isEvent(String event) {
+	    return this.events.contains(event);
+	}
+	
+	public boolean isState(String state) {
+	    return this.states.containsKey(state);
+	}
+	
 	@Override public synchronized void defineEvent(String event) {
 	    if (event == null)
 	        throw new IllegalArgumentException("Can not define an event with null value");
@@ -130,25 +138,10 @@ public class StateMachineImpl implements StateMachine {
         if (!events.contains(event))
             throw new EventNotDefinedException("Event " + event + " not defined");
         
-        /*if (!allowsReentrantTransitions()) {
-            if (inTransition) {
-                throw new ReentrantTransitionNotAllowed("Reentrance from the same thread is not allowed");
-            } else {
-                inTransition = true;
-            }
+        if (inTransition) {
+            throw new ReentrantTransitionNotAllowed("Reentrance from the same thread is not allowed");
         } else {
-            if (inTransition) {
-                // We add the item into the queue
-            } else {
-                inTransition = true;
-            }
-        }*/
-        if (!allowsReentrantTransitions()) {
-            if (inTransition) {
-                throw new ReentrantTransitionNotAllowed("Reentrance from the same thread is not allowed");
-            } else {
-                inTransition = true;
-            }
+            inTransition = true;
         }
         
         try {
@@ -162,8 +155,7 @@ public class StateMachineImpl implements StateMachine {
                 PhaseEnterResult result = controller.phaseEnterState(tEvent);
                 if (result != null) {
                     l.debug("#processEvent: Redirecting forced by controller to event " + result.getEvent());
-                    if (!allowsReentrantTransitions())
-                        inTransition = false; // Unnecessary check, coz inTransition=false works fine for reentrant and non-reentran
+                    inTransition = false; 
                     
                     this.processEvent(result.getEvent(), result.getObject());
                 }
@@ -172,9 +164,7 @@ public class StateMachineImpl implements StateMachine {
                     l.debug("#processEvent: transition cancelled on exit state phase");
             }
         } finally {
-            if (!allowsReentrantTransitions()) {
-                inTransition = false;
-            }
+            inTransition = false;
         }
     }
 	

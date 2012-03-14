@@ -22,6 +22,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import net.xiron.pattern.statemachine.PhaseEnterResult;
+import net.xiron.pattern.statemachine.ReentrantStateMachine;
 import net.xiron.pattern.statemachine.StateMachine;
 import net.xiron.pattern.statemachine.StateMachineController;
 import net.xiron.pattern.statemachine.StateMachineImpl;
@@ -57,12 +58,23 @@ public class AnnotatedControllerProcessor implements StateMachineController {
     public AnnotatedControllerProcessor(AnnotatedController realController) 
         throws StateNotDefinedException, EventNotDefinedException, IllegalAnnotationException
     {
-        this.stateMachine = new StateMachineImpl();
-        this.stateMachine.setController(this);
+        this(realController, false);
+    }
+    
+    public AnnotatedControllerProcessor(AnnotatedController realController, boolean reentrant) 
+        throws StateNotDefinedException, EventNotDefinedException, IllegalAnnotationException
+    {
+        if (reentrant) {
+            this.stateMachine = new ReentrantStateMachine();
+        } else {
+            this.stateMachine = new StateMachineImpl();
+        }
         
+        this.stateMachine.setController(this);
+            
         this.realController = realController;
         this.transitionDictionary = new TransitionDictionary();
-        
+            
         processAnnotatedController();
     }
     
