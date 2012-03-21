@@ -27,6 +27,4 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Event {
-    String value() default "";
-}
+public @interface Event {}
