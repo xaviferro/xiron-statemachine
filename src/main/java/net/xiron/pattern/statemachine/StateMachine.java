@@ -16,9 +16,7 @@
 package net.xiron.pattern.statemachine;
 
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
-import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
 import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
-import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 
 /**
  * Allows defining a set of states that are connected to each other. State machines
@@ -30,12 +28,12 @@ import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
  * 
  * <p>Constraints and invariants.
  * <ul>
- * <li>We are forced to declare explicitely states and events. We could try to use
+ * <li>We are forced to declare explicitly states and events. We could try to use
  *     a less explicit model, but we want to avoid typing and maintenance errors.</li>
  * <li>We are forced to declare transitions. A transition is a set of a source state, 
  *     target state and the event that provokes the transition itself.</li>
  * <li>Each transition is executed in 3 steps that allow us to keep a good control
- *     of the actions to perform in each step. Check @link{StateMachineController} for
+ *     of the actions to perform in each step. Check @link{TransitionExecution Controller} for
  *     further details.</li>
  * <li>State machines are designed to protect critical sections in a complex event driven
  *     environment. Only one thread CAN execute a transition at a time. Any manipulation
@@ -51,31 +49,30 @@ import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
  * <li>If {@link #allowsReentrantTransition} is set to false -the only one supported now-,
  *     we are forcing the state machine to guarantee that one and only thread is allowed
  *     to perform transitions at a time. The same thread is not allowed to perform more
- *     transitions during the transition. You might use the {@link StateMachineController#phaseEnterState}
+ *     transitions during the transition. You might use the {@link TransitionController#phaseEnterState}
  *     mechanism for forwarding</li>
  * </ul>
  * 
  * <p>Invariant.
  * <ul>
- * <li>We only allow one transition at a time with the lock.</li>
+ * <li>We only allow one transition at a time within the lock.</li>
  * <li>Transitions from other threads with be blocked by the state machine lock.</li>
  * <li>Transitions from the same thread will throw an exception as we need to avoid recurrent transitions that
  *     might end up in an error state. For example, we want to prevent transitions during the exit phase and
  *     consequent notifications out of order.</li>
  * </ul>
+ * 
  * @author xavi.ferro
  */
 public interface StateMachine {
     /**
      * Allows the thread that owns the lock (that is already executing a transition)
-     * to force more transitions out of the {@link StateMachineController#phaseEnterState}
+     * to force more transitions out of the {@link TransitionController#phaseEnterState}
      * phase.
      * 
      * <p>Use a reentrant strategy carefully as it might be more difficult to prevent deadlocks
      * as you might try to call the {@link #processEvent} method from any component that is
-     * not the {@link StateMachineController} itself.
-     * 
-     * <p>TODO. At the moment we don't allow reentrant transitions.
+     * not the {@link TransitionController} itself.
      * 
      * @ return true if we allow reentrant transitions, or false if we want the state
      *          machine to preserve this situation and throw an exception instead. 
@@ -108,38 +105,9 @@ public interface StateMachine {
      */
     public void defineTransition(String sourceState, String targetState, String event) 
         throws StateNotDefinedException, EventNotDefinedException;
-
-    /**
-     * Checks that current event is allowed for the current state. That means that a
-     * transition has been defined for this state machine.
-     * 
-     * If the transition has been defined, this method will perform:
-     * 1 - execute the transitionExitPhase
-     * 2 - execute the transition
-     * 3 - execute the transitionEnterPhase
-     * 
-     * Everything will happen with the state machine lock acquired, so careful with the
-     * deadlocks.
-     * 
-     * @param event the event that we want to process.
-     *  
-     * @param object if we need an object to be passed to the controller with
-     *        context meaning.
-     * 
-     * @throws StateNotDefinedExc
-     * @throws ReentrantTransitionNotAllowed
-     */
-    public void processEvent(String event, Object object) 
-        throws ReentrantTransitionNotAllowed, EventNotDefinedException, TransitionNotDefinedException;
     
     /**
      * Returns the current state of the state machine.
      */
     public String getCurrentState();
-    
-    /**
-     * Registering the controller that receives notifications when transitions happen.
-     * The controller should be the one that modifies the critical section information.
-     */
-    public void setController(StateMachineController controller);
 }

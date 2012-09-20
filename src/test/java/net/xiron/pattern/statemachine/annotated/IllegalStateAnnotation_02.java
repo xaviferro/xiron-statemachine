@@ -17,7 +17,7 @@ package net.xiron.pattern.statemachine.annotated;
 
 
 /**
- * State is an int.
+ * State should be a public static String.
  * 
  * @author xavi.ferro
  */

@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author xavi.ferro
  */
-public class DumbController implements StateMachineController {
+public class DumbController implements TransitionController {
     private boolean phaseExit;
     private Logger l = LoggerFactory.getLogger(DumbController.class);
     
@@ -33,19 +33,19 @@ public class DumbController implements StateMachineController {
         this.phaseExit = phaseExit;
     }
     
-    @Override public boolean phaseExitState(TransitionEvent evt) {
+    @Override public boolean exitStatePhase(TransitionEvent evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseExitState: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
         
         return phaseExit;
     }
 
-    @Override public void phaseTransition(TransitionEvent evt) {
+    @Override public void transitionPhase(TransitionEvent evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseTransition: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
     }
 
-    @Override public PhaseEnterResult phaseEnterState(TransitionEvent evt) {
+    @Override public PhaseEnterResult enterStatePhase(TransitionEvent evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseEnterState: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
         

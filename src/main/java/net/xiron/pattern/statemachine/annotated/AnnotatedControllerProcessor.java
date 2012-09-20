@@ -21,12 +21,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
+import net.xiron.pattern.statemachine.NonReentrantStateMachine;
+import net.xiron.pattern.statemachine.NonReentrantStateMachineImpl;
 import net.xiron.pattern.statemachine.PhaseEnterResult;
-import net.xiron.pattern.statemachine.ReentrantStateMachine;
+import net.xiron.pattern.statemachine.ReentrantStateMachineImpl;
 import net.xiron.pattern.statemachine.StateMachine;
-import net.xiron.pattern.statemachine.StateMachineController;
-import net.xiron.pattern.statemachine.StateMachineImpl;
 import net.xiron.pattern.statemachine.TransitionEvent;
+import net.xiron.pattern.statemachine.TransitionController;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.IllegalAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalEventAnnotationException;
@@ -47,10 +48,10 @@ import org.slf4j.LoggerFactory;
  * 
  * @author xavi.ferro
  */
-public class AnnotatedControllerProcessor implements StateMachineController {
+public class AnnotatedControllerProcessor implements TransitionController {
     private static Logger l = LoggerFactory.getLogger(AnnotatedControllerProcessor.class);
     
-    private StateMachine stateMachine;
+    private NonReentrantStateMachine stateMachine;
     private AnnotatedController realController;
     
     private TransitionDictionary transitionDictionary;
@@ -65,13 +66,11 @@ public class AnnotatedControllerProcessor implements StateMachineController {
         throws StateNotDefinedException, EventNotDefinedException, IllegalAnnotationException
     {
         if (reentrant) {
-            this.stateMachine = new ReentrantStateMachine();
+            this.stateMachine = new ReentrantStateMachineImpl();
         } else {
-            this.stateMachine = new StateMachineImpl();
+            this.stateMachine = new NonReentrantStateMachineImpl();
         }
         
-        this.stateMachine.setController(this);
-            
         this.realController = realController;
         this.transitionDictionary = new TransitionDictionary();
             
@@ -101,7 +100,7 @@ public class AnnotatedControllerProcessor implements StateMachineController {
             String stateName = (String) field.get(this.realController);
             stateMachine.defineState(stateName);
         } catch (IllegalAccessException e) {
-            l.error("EERROR", e); 
+            l.error("Error. This should never happen as we have checked the conditions before using reflection", e); 
         }
     }
     
@@ -113,7 +112,8 @@ public class AnnotatedControllerProcessor implements StateMachineController {
             String eventName = (String) field.get(this.realController);
             stateMachine.defineEvent(eventName);
         } catch (IllegalAccessException e) {
-            l.error("EERROR", e);
+            
+            l.error("ERROR. This should never happen as we have checked the conditions before using reflection", e);
         } 
     }
     
@@ -194,10 +194,10 @@ public class AnnotatedControllerProcessor implements StateMachineController {
     public void processEvent(String event, Object object) 
         throws ReentrantTransitionNotAllowed, StateNotDefinedException, EventNotDefinedException, TransitionNotDefinedException 
     {
-        stateMachine.processEvent(event, object);
+        stateMachine.processEvent(event, object, this);
     }
     
-    @Override public boolean phaseExitState(TransitionEvent event) {
+    @Override public boolean exitStatePhase(TransitionEvent event) {
         TransitionDefinition def = transitionDictionary.findBy(event.getSource(), 
                                                                event.getTarget(), 
                                                                event.getEvent(), 
@@ -212,7 +212,7 @@ public class AnnotatedControllerProcessor implements StateMachineController {
         return result;
     }
 
-    @Override public void phaseTransition(TransitionEvent event) {
+    @Override public void transitionPhase(TransitionEvent event) {
         TransitionDefinition def = transitionDictionary.findBy(event.getSource(), 
                                                                event.getTarget(), 
                                                                event.getEvent(), 
@@ -224,7 +224,7 @@ public class AnnotatedControllerProcessor implements StateMachineController {
         }
     }
 
-    @Override public PhaseEnterResult phaseEnterState(TransitionEvent event) {
+    @Override public PhaseEnterResult enterStatePhase(TransitionEvent event) {
         TransitionDefinition def = transitionDictionary.findBy(event.getSource(), 
                                                                event.getTarget(), 
                                                                event.getEvent(), 
@@ -292,8 +292,8 @@ public class AnnotatedControllerProcessor implements StateMachineController {
         }
         
         /*
-         * TODO . Check exceptions. I think we shouldn't do anything with them as
-         * only allowed transitions are taken into account.
+         * Exceptions at this point are shouldn't be taken into account as
+         * we have already checked them when creating them
          */
         public void executeTransitionPhase(TransitionEvent transitionEvent) {
             try {

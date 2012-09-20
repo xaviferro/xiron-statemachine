@@ -33,13 +33,13 @@ public class StateMachineDefinitionTest {
     public static String EVENT_BA = "EVENT_BA";
     public static String EVENT_CC = "EVENT_CC";
     
-    private StateMachine theInstance;
+    private NonReentrantStateMachine theInstance;
     
-    private StateMachine createStateMachine() 
+    private NonReentrantStateMachine createStateMachine() 
         throws StateNotDefinedException, EventNotDefinedException 
     {
         if (theInstance == null) {
-            theInstance = new StateMachineImpl();
+            theInstance = new NonReentrantStateMachineImpl();
             theInstance.defineEvent(EVENT_AB);
             theInstance.defineEvent(EVENT_BC);
             theInstance.defineEvent(EVENT_BB);
@@ -64,13 +64,14 @@ public class StateMachineDefinitionTest {
     
     @Test(expected=TransitionNotDefinedException.class)
     public void testSuccessfulTransitions() throws StateMachineException {
-        StateMachine sm = createStateMachine();
+        NonReentrantStateMachine sm = createStateMachine();
             
-        sm.setController(new DumbController(true));
-        sm.processEvent(EVENT_AB, null);
-        sm.processEvent(EVENT_BB, null);
-        sm.processEvent(EVENT_BC, null);
+        //sm.setController(new DumbController(true));
+        DumbController dc = new DumbController(true);
+        sm.processEvent(EVENT_AB, null, dc);
+        sm.processEvent(EVENT_BB, null, dc);
+        sm.processEvent(EVENT_BC, null, dc);
             
-        sm.processEvent(EVENT_AB, null);
+        sm.processEvent(EVENT_AB, null, dc);
     }
 }

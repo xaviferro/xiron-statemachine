@@ -16,7 +16,7 @@
 package net.xiron.pattern.statemachine;
 
 /**
- * A non null object is returned during the {@link StateMachineController#phaseEnterState(TransitionEvent event)}
+ * A non null object is returned during the {@link TransitionController#enterStatePhase(TransitionEvent event)}
  * if we want the state machine to process a new event before releasing the lock.
  * 
  * <p>This  is quite useful for some conditional states that might evaluate in runtime next event to be

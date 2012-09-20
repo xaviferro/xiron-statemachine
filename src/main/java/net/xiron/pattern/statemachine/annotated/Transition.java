@@ -21,10 +21,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Transition annotation allows the AnnotatedControllerProcessor to look for
- * methods that are marked with it. 
+ * Marks a method so it will be executed when the transition defined in 
+ * the annotation definition occurs.
  * 
- * @author xavi.ferro 
+ * <p>
+ * The {@link AnnotatedControllerProcessor} looks for all methods for
+ * methods that are marked with it.  
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
