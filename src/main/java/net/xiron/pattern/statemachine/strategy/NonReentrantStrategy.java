@@ -12,14 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-package net.xiron.pattern.statemachine.annotated;
+ */ 
+package net.xiron.pattern.statemachine.strategy;
 
-import net.xiron.pattern.statemachine.annotations.Event;
-import net.xiron.pattern.statemachine.annotations.StateMachine;
-import net.xiron.pattern.statemachine.annotations.Strategies;
 
-@StateMachine(strategy=Strategies.NON_REENTRANT)
-public class IllegalEventAnnotation_02 {
-    @Event private final static String EVENT = "EVENT";
+public class NonReentrantStrategy extends ReentrantStrategy {
+    public NonReentrantStrategy() {
+        super(false);
+    }
 }

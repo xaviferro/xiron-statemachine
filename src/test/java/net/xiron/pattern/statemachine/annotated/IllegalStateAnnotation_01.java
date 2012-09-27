@@ -15,12 +15,15 @@
  */   
 package net.xiron.pattern.statemachine.annotated;
 
+import net.xiron.pattern.statemachine.annotations.State;
+import net.xiron.pattern.statemachine.annotations.StateMachine;
+import net.xiron.pattern.statemachine.annotations.Strategies;
+
 
 /**
  * The state is not final
- * 
- * @author xavi.ferro
  */
-public class IllegalStateAnnotation_01 implements AnnotatedController {
-    @StartState @State public static String STATE_A = "STATE_A";
+@StateMachine(strategy=Strategies.NON_REENTRANT)
+public class IllegalStateAnnotation_01  {
+    @State(isStart=true) public static String STATE_A = "STATE_A";
 }

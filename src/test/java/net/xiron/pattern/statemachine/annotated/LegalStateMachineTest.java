@@ -18,12 +18,21 @@ package net.xiron.pattern.statemachine.annotated;
 import junit.framework.Assert;
 import net.xiron.pattern.statemachine.PhaseEnterResult;
 import net.xiron.pattern.statemachine.TransitionEvent;
+import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
+import net.xiron.pattern.statemachine.annotations.Event;
+import net.xiron.pattern.statemachine.annotations.State;
+import net.xiron.pattern.statemachine.annotations.StateMachine;
+import net.xiron.pattern.statemachine.annotations.Strategies;
+import net.xiron.pattern.statemachine.annotations.Transition;
+import net.xiron.pattern.statemachine.annotations.TransitionPhases;
+import net.xiron.pattern.statemachine.annotations.Transitions;
 import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
 import org.junit.Test;
 
-public class LegalStateMachineTest implements AnnotatedController {
-    @State @StartState public static final String STATE_A = "STATE_A";
+@StateMachine(strategy=Strategies.NON_REENTRANT)
+public class LegalStateMachineTest {
+    @State(isStart=true) public static final String STATE_A = "STATE_A";
     @State public static final String STATE_B = "STATE_B";
     @State public static final String STATE_COND = "STATE_COND";
     @State public static final String STATE_D = "STATE_D";

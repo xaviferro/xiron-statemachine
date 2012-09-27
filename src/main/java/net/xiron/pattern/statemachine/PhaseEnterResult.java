@@ -21,8 +21,6 @@ package net.xiron.pattern.statemachine;
  * 
  * <p>This  is quite useful for some conditional states that might evaluate in runtime next event to be
  * consumed.
- * 
- * @author xavi.ferro
  */
 public class PhaseEnterResult {
     private String event;

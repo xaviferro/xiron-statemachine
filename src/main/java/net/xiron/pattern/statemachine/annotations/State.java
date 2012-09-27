@@ -13,10 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */   
-package net.xiron.pattern.statemachine.annotated;
+package net.xiron.pattern.statemachine.annotations;
 
-public enum TransitionPhases {
-    PHASE_EXIT,
-    PHASE_TRANSITION,
-    PHASE_ENTER;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * @author xavi.ferro
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface State { 
+    boolean isStart() default false;
+    boolean isEnd() default false;
 }

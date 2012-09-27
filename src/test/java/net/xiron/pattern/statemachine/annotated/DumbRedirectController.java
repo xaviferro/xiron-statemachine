@@ -17,9 +17,16 @@ package net.xiron.pattern.statemachine.annotated;
 
 import net.xiron.pattern.statemachine.PhaseEnterResult;
 import net.xiron.pattern.statemachine.TransitionEvent;
+import net.xiron.pattern.statemachine.annotations.Event;
+import net.xiron.pattern.statemachine.annotations.State;
+import net.xiron.pattern.statemachine.annotations.StateMachine;
+import net.xiron.pattern.statemachine.annotations.Strategies;
+import net.xiron.pattern.statemachine.annotations.Transition;
+import net.xiron.pattern.statemachine.annotations.TransitionPhases;
 
-public class DumbRedirectController implements AnnotatedController {
-    @StartState @State public static final String STATE_A = "STATE_A";
+@StateMachine(strategy=Strategies.NON_REENTRANT)
+public class DumbRedirectController {
+    @State(isStart=true) public static final String STATE_A = "STATE_A";
     @State public static final String STATE_B = "STATE_B";
     
     @Event public static final String EVENT_AA = "EVENT_AA";

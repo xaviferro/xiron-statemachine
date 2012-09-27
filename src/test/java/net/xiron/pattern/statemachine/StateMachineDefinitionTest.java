@@ -19,6 +19,7 @@ import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
+import net.xiron.pattern.statemachine.strategy.NonReentrantStrategy;
 
 import org.junit.Test;
 
@@ -33,45 +34,45 @@ public class StateMachineDefinitionTest {
     public static String EVENT_BA = "EVENT_BA";
     public static String EVENT_CC = "EVENT_CC";
     
-    private NonReentrantStateMachine theInstance;
+    private StateMachineDefinition definition;
     
-    private NonReentrantStateMachine createStateMachine() 
+    private StateMachineDefinition createMachineDefinition() 
         throws StateNotDefinedException, EventNotDefinedException 
     {
-        if (theInstance == null) {
-            theInstance = new NonReentrantStateMachineImpl();
-            theInstance.defineEvent(EVENT_AB);
-            theInstance.defineEvent(EVENT_BC);
-            theInstance.defineEvent(EVENT_BB);
-            theInstance.defineEvent(EVENT_BA);
+        if (definition == null) {
+            definition = new StateMachineDefinitionImpl();
+            definition.defineEvent(EVENT_AB);
+            definition.defineEvent(EVENT_BC);
+            definition.defineEvent(EVENT_BB);
+            definition.defineEvent(EVENT_BA);
             
-            theInstance.defineState(STATE_A);
-            theInstance.defineState(STATE_B);
-            theInstance.defineState(STATE_C);
+            definition.defineState(STATE_A);
+            definition.defineState(STATE_B);
+            definition.defineState(STATE_C);
             
-            theInstance.defineTransition(STATE_A, STATE_B, EVENT_AB);
-            theInstance.defineTransition(STATE_B, STATE_C, EVENT_BC);
-            theInstance.defineTransition(STATE_B, STATE_B, EVENT_BB);
-            theInstance.defineTransition(STATE_B, STATE_A, EVENT_BA);
+            definition.defineTransition(STATE_A, STATE_B, EVENT_AB);
+            definition.defineTransition(STATE_B, STATE_C, EVENT_BC);
+            definition.defineTransition(STATE_B, STATE_B, EVENT_BB);
+            definition.defineTransition(STATE_B, STATE_A, EVENT_BA);
             
-            theInstance.setStartState(STATE_A);
+            definition.setStartState(STATE_A);
             
-            System.err.println(theInstance);
+            System.err.println(definition);
         }
         
-        return theInstance;
+        return definition;
     }
     
     @Test(expected=TransitionNotDefinedException.class)
     public void testSuccessfulTransitions() throws StateMachineException {
-        NonReentrantStateMachine sm = createStateMachine();
-            
-        //sm.setController(new DumbController(true));
+        StateMachineDefinition definition = createMachineDefinition();
+        NonReentrantStrategy strategy = new NonReentrantStrategy();
+        StateMachineImpl sm = new StateMachineImpl(definition, strategy);
+        
         DumbController dc = new DumbController(true);
-        sm.processEvent(EVENT_AB, null, dc);
-        sm.processEvent(EVENT_BB, null, dc);
-        sm.processEvent(EVENT_BC, null, dc);
-            
-        sm.processEvent(EVENT_AB, null, dc);
+        sm.processEvent(EVENT_AB, null, dc, null);
+        sm.processEvent(EVENT_BB, null, dc, null);
+        sm.processEvent(EVENT_BC, null, dc, null);
+        sm.processEvent(EVENT_AB, null, dc, null);
     }
 }

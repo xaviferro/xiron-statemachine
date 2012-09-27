@@ -16,16 +16,20 @@
 package net.xiron.pattern.statemachine.annotated;
 
 import junit.framework.Assert;
-import net.xiron.pattern.statemachine.StateMachine;
+
+import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
+import net.xiron.pattern.statemachine.annotations.StateMachine;
+import net.xiron.pattern.statemachine.annotations.Strategies;
 
 import org.junit.Test;
 
+@StateMachine(strategy=Strategies.NON_REENTRANT)
 public class RedirectOnEnterTransitionTest {
     @Test
     public void testRedirect() throws Exception {
         AnnotatedControllerProcessor processor = new AnnotatedControllerProcessor(new DumbRedirectController());
         processor.processEvent(DumbRedirectController.EVENT_AA, null);
-        StateMachine sm = processor.getStateMachine();
+        net.xiron.pattern.statemachine.StateMachine sm = processor.getStateMachine();
         String endState = sm.getCurrentState();
         Assert.assertEquals(endState, DumbRedirectController.STATE_B);
     }

@@ -22,8 +22,6 @@ import org.slf4j.LoggerFactory;
  * Dumb annotated controller useful for testing. Only logs events.
  * One can configure the return value in the phaseExit in the constructor.
  * It does not redirect on the exit phase.
- * 
- * @author xavi.ferro
  */
 public class DumbController implements TransitionController {
     private boolean phaseExit;

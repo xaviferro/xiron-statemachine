@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */   
-package net.xiron.pattern.statemachine.annotated;
+package net.xiron.pattern.statemachine.annotations;
 
-/**
- * Marker interface. Classes that implement this interface can
- * be enriched with the state machine annotations.
- * 
- * @author xavi.ferro
- */
-public interface AnnotatedController { }
+public enum TransitionPhases {
+    PHASE_EXIT,
+    PHASE_TRANSITION,
+    PHASE_ENTER;
+}

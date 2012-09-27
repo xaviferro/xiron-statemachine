@@ -17,12 +17,19 @@ package net.xiron.pattern.statemachine.annotated;
 
 import junit.framework.Assert;
 import net.xiron.pattern.statemachine.TransitionEvent;
+import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
+import net.xiron.pattern.statemachine.annotations.Event;
+import net.xiron.pattern.statemachine.annotations.State;
+import net.xiron.pattern.statemachine.annotations.StateMachine;
+import net.xiron.pattern.statemachine.annotations.Strategies;
+import net.xiron.pattern.statemachine.annotations.Transition;
 import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
 import org.junit.Test;
 
-public class ReentrantTest implements AnnotatedController {
-    @StartState @State public static final String STATE_A = "STATE_A";
+@StateMachine(strategy=Strategies.ENQUEUE)
+public class ReentrantTest {
+    @State(isStart=true) public static final String STATE_A = "STATE_A";
     @State public static final String STATE_B = "STATE_B";
     @State public static final String STATE_C = "STATE_C";
     
@@ -49,7 +56,7 @@ public class ReentrantTest implements AnnotatedController {
     
     @Test
     public void test() throws StateMachineException {
-        processor = new AnnotatedControllerProcessor(this, true);
+        processor = new AnnotatedControllerProcessor(this);
         processor.processEvent(EVENT_AA, null);
         Assert.assertEquals(processor.getStateMachine().getCurrentState(), STATE_B);
     }

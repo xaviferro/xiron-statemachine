@@ -15,6 +15,9 @@
  */   
 package net.xiron.pattern.statemachine.annotated;
 
+import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
+import net.xiron.pattern.statemachine.annotations.StateMachine;
+import net.xiron.pattern.statemachine.annotations.Strategies;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.IllegalAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalEventAnnotationException;
@@ -25,6 +28,7 @@ import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
 
 import org.junit.Test;
 
+@StateMachine(strategy=Strategies.NON_REENTRANT)
 public class IllegalAnnotatedControllerTest  {
     @Test(expected=IllegalEventAnnotationException.class)
     public void testIllegalEvent_01() throws StateNotDefinedException, EventNotDefinedException, IllegalAnnotationException {

@@ -15,14 +15,19 @@
  */   
 package net.xiron.pattern.statemachine.annotated;
 
+import net.xiron.pattern.statemachine.annotations.Event;
+import net.xiron.pattern.statemachine.annotations.State;
+import net.xiron.pattern.statemachine.annotations.StateMachine;
+import net.xiron.pattern.statemachine.annotations.Strategies;
+import net.xiron.pattern.statemachine.annotations.Transition;
+
 
 /**
  * Wrong parameter names is transition
- * 
- * @author xavi.ferro
  */
-public class IllegalTransitionAnnotation_01 implements AnnotatedController {
-    @StartState @State public static final String STATE_A = "STATE_A";
+@StateMachine(strategy=Strategies.NON_REENTRANT)
+public class IllegalTransitionAnnotation_01 {
+    @State(isStart=true) public static final String STATE_A = "STATE_A";
     @State public static final String STATE_B = "STATE_B";
     
     @Event public static final String EVENT_AB = "EVENT_AB";

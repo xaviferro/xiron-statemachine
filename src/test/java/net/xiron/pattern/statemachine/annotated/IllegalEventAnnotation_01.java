@@ -15,12 +15,17 @@
  */   
 package net.xiron.pattern.statemachine.annotated;
 
+import net.xiron.pattern.statemachine.annotations.Event;
+import net.xiron.pattern.statemachine.annotations.StateMachine;
+import net.xiron.pattern.statemachine.annotations.Strategies;
+
 
 /**
  * Event is not final
  * 
  * @author xavi.ferro
  */
-public class IllegalEventAnnotation_01 implements AnnotatedController {
+@StateMachine(strategy=Strategies.NON_REENTRANT)
+public class IllegalEventAnnotation_01 {
     @Event public static String EVENT_AB = "EVENT_AB";
 }

@@ -22,8 +22,6 @@ import java.util.HashMap;
  * target and event), we provide the object passed when processing the event and
  * a transition context map which is really helpful when we need to store information
  * between phases of the same transition.
- * 
- * @author xavi.ferro
  */
 public class TransitionEvent {
     private String source;
@@ -61,7 +59,8 @@ public class TransitionEvent {
         return this.transitionContext;
     }
     
-    @Override public String toString() {
+    @Override 
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("source: ").append(source).append(" - event: ").append(event).append(" - target: ").append(target);
         return sb.toString();
