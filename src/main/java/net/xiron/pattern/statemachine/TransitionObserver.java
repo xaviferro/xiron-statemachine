@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */   
-package net.xiron.pattern.statemachine.exceptions;
+package net.xiron.pattern.statemachine;
 
-public class StateNotDefinedException extends StateMachineDefinitionException {
-    private static final long serialVersionUID = 1L;
-    
-    public StateNotDefinedException(String msg) {
-        super(msg);
-    }
+public interface TransitionObserver {
+
 }

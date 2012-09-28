@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation that allows a method to be marked with a list of 
  * {@link Transition} annotations. So, it means this method will
- * be executed for any transition of the list.
+ * be executed for any transition on the list.
  * 
  * <p>
  * One common example is the noop method (eg. when we want to define

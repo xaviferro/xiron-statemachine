@@ -15,7 +15,7 @@
  */   
 package net.xiron.pattern.statemachine.exceptions;
 
-public class EventNotDefinedException extends StateMachineException {
+public class EventNotDefinedException extends StateMachineDefinitionException {
     private static final long serialVersionUID = 1L;
     
     public EventNotDefinedException(String msg) {

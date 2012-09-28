@@ -21,9 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Identifies an event for the state machine.
- * 
- * @author xavi.ferro
+ * Defines an event in an annotated state machine. The annotated
+ * field must be defined as <code>public static final</code>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

@@ -17,6 +17,7 @@ package net.xiron.pattern.statemachine;
 
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
+import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 
 public interface StateMachine {
@@ -26,14 +27,29 @@ public interface StateMachine {
      */
     public void setCurrentState(String state);
 
+    /**
+     * Returns the current state of the state machine
+     */
     public String getCurrentState();
 
+    /**
+     * Returns the state machine definition 
+     */
     public StateMachineDefinition getStateMachineDefinition();
 
+    /**
+     * Consumes an event
+     * @param event
+     * @param object
+     * @param controller
+     * @param observer
+     * @throws ReentrantTransitionNotAllowed
+     * @throws EventNotDefinedException
+     * @throws TransitionNotDefinedException
+     */
     public void processEvent(String event, Object object,
                              TransitionController controller,
-                             TransitionLifecycleController observer)
+                             TransitionObserver observer)
             throws ReentrantTransitionNotAllowed, 
-                   EventNotDefinedException,
-                   TransitionNotDefinedException;
+                   StateMachineDefinitionException;
 }

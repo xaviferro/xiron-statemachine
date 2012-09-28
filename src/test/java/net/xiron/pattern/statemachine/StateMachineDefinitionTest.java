@@ -15,9 +15,8 @@
  */   
 package net.xiron.pattern.statemachine;
 
-import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
+import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 import net.xiron.pattern.statemachine.exceptions.StateMachineException;
-import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 import net.xiron.pattern.statemachine.strategy.NonReentrantStrategy;
 
@@ -37,7 +36,7 @@ public class StateMachineDefinitionTest {
     private StateMachineDefinition definition;
     
     private StateMachineDefinition createMachineDefinition() 
-        throws StateNotDefinedException, EventNotDefinedException 
+        throws StateMachineDefinitionException
     {
         if (definition == null) {
             definition = new StateMachineDefinitionImpl();
@@ -46,16 +45,14 @@ public class StateMachineDefinitionTest {
             definition.defineEvent(EVENT_BB);
             definition.defineEvent(EVENT_BA);
             
-            definition.defineState(STATE_A);
+            definition.defineState(STATE_A, true, false);
             definition.defineState(STATE_B);
-            definition.defineState(STATE_C);
+            definition.defineState(STATE_C, false, true);
             
             definition.defineTransition(STATE_A, STATE_B, EVENT_AB);
             definition.defineTransition(STATE_B, STATE_C, EVENT_BC);
             definition.defineTransition(STATE_B, STATE_B, EVENT_BB);
             definition.defineTransition(STATE_B, STATE_A, EVENT_BA);
-            
-            definition.setStartState(STATE_A);
             
             System.err.println(definition);
         }

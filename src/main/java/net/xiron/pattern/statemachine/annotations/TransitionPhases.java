@@ -15,6 +15,10 @@
  */   
 package net.xiron.pattern.statemachine.annotations;
 
+/**
+ * Each transition has 3 phases: exit, transition and enter. 
+ * Check {@link TransitionController} for further details
+ */
 public enum TransitionPhases {
     PHASE_EXIT,
     PHASE_TRANSITION,

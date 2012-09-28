@@ -21,9 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method so it will be executed when the transition defined in 
- * the annotation definition occurs.
- * 
+ * Defines a transition in an annotated state machine. The annotated
+ * method will be executed within the phase defined by {@link #phase()}.
  * <p>
  * The {@link AnnotatedControllerProcessor} looks for all methods for
  * methods that are marked with it.  
@@ -32,9 +31,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Transition {
     /**
-     * One might be interested in a specific phase of the transition to 
-     * perform the operation. Check the @link{StateMachineController} for 
-     * further information.
+     * One can choose between the exit phase, transition phase or enter one.
+     * Check the @link{StateMachineController} for further information.
      * 
      * By default, its value is @link{TransitionPhases.PHASE_TRANSITION}.
      */

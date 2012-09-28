@@ -21,10 +21,10 @@ import net.xiron.pattern.statemachine.StateMachineDefinition;
 import net.xiron.pattern.statemachine.StateMachineStrategy;
 import net.xiron.pattern.statemachine.TransitionController;
 import net.xiron.pattern.statemachine.TransitionEvent;
-import net.xiron.pattern.statemachine.TransitionLifecycleController;
+import net.xiron.pattern.statemachine.TransitionObserver;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
-import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
+import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +50,8 @@ public class ReentrantStrategy implements StateMachineStrategy {
     public void processEvent(StateMachine statemachine,
                              String event, Object object,
                              TransitionController controller,
-                             TransitionLifecycleController lifecycle)
-            throws ReentrantTransitionNotAllowed, EventNotDefinedException,
-            TransitionNotDefinedException 
+                             TransitionObserver lifecycle)
+            throws ReentrantTransitionNotAllowed, StateMachineDefinitionException
     {
         StateMachineDefinition stateMachineDefinition = statemachine.getStateMachineDefinition();
         if (!stateMachineDefinition.isEvent(event))

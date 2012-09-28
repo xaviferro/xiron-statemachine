@@ -17,6 +17,7 @@ package net.xiron.pattern.statemachine;
 
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
+import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 
 public interface StateMachineStrategy {
@@ -47,6 +48,6 @@ public interface StateMachineStrategy {
                              String event,
                              Object object,
                              TransitionController controller,
-                             TransitionLifecycleController lifecycle)
-        throws ReentrantTransitionNotAllowed, EventNotDefinedException, TransitionNotDefinedException;
+                             TransitionObserver lifecycle)
+        throws ReentrantTransitionNotAllowed, StateMachineDefinitionException;
 }

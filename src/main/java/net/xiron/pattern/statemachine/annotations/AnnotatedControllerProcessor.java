@@ -36,8 +36,8 @@ import net.xiron.pattern.statemachine.exceptions.IllegalEventAnnotationException
 import net.xiron.pattern.statemachine.exceptions.IllegalStateAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalTransitionAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
+import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
-import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 import net.xiron.pattern.statemachine.strategy.NonReentrantStrategy;
 import net.xiron.pattern.statemachine.strategy.ReentrantEnqueueStrategy;
 import net.xiron.pattern.statemachine.strategy.ReentrantStrategy;
@@ -64,8 +64,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
     private TransitionDictionary transitionDictionary;
 
     public AnnotatedControllerProcessor(Object realController)
-            throws StateNotDefinedException, EventNotDefinedException,
-            IllegalAnnotationException {
+            throws StateMachineDefinitionException, IllegalAnnotationException {
         this.definition = new StateMachineDefinitionImpl();
 
         this.realController = realController;
@@ -92,18 +91,21 @@ public class AnnotatedControllerProcessor implements TransitionController {
     private net.xiron.pattern.statemachine.annotations.StateMachine checkTypeAnnotation(Object object)
             throws EventNotDefinedException,
             IllegalControllerAnnotationException, IllegalAnnotationException,
-            StateNotDefinedException 
-    {
-        net.xiron.pattern.statemachine.annotations.StateMachine sm = object.getClass().getAnnotation(net.xiron.pattern.statemachine.annotations.StateMachine.class);
+            StateNotDefinedException {
+        net.xiron.pattern.statemachine.annotations.StateMachine sm = object
+                .getClass()
+                .getAnnotation(
+                        net.xiron.pattern.statemachine.annotations.StateMachine.class);
         if (sm == null)
             throw new IllegalControllerAnnotationException(
                     "Object does not contain any valid controller annotation");
-        
+
         return sm;
     }
 
     private void checkStateAnnotation(Field field, State ann)
-            throws IllegalStateAnnotationException {
+            throws IllegalStateAnnotationException,
+            StateMachineDefinitionException {
         if (!isStringAndFinal(field))
             throw new IllegalStateAnnotationException("@State "
                     + field.getName()
@@ -111,21 +113,10 @@ public class AnnotatedControllerProcessor implements TransitionController {
 
         try {
             String stateName = (String) field.get(this.realController);
-            definition.defineState(stateName);
-            if (ann.isStart()) {
-                if (definition.getStartState() != null) {
-                    throw new IllegalStateAnnotationException("Cannot define two start states for an annotated controller");
-                }
-                definition.setStartState(stateName);
-            }
-            if (ann.isEnd()) {
-                definition.setEndState(stateName);
-            }
+            definition.defineState(stateName, ann.isStart(), ann.isEnd());
         } catch (IllegalAccessException e) {
             l.error("Error. This should never happen as we have checked the conditions before using reflection",
                     e);
-        } catch (StateNotDefinedException snde) {
-            l.error("Error. This should never happen as we have created the state before setting as startState", snde);
         }
     }
 
@@ -182,11 +173,12 @@ public class AnnotatedControllerProcessor implements TransitionController {
     }
 
     private void processAnnotatedController()
-            throws StateNotDefinedException, EventNotDefinedException,
+            throws StateMachineDefinitionException,
             IllegalTransitionAnnotationException, IllegalAnnotationException {
         Class<?> clazz = realController.getClass();
 
-        net.xiron.pattern.statemachine.annotations.StateMachine annType = this.checkTypeAnnotation(realController);
+        net.xiron.pattern.statemachine.annotations.StateMachine annType = this
+                .checkTypeAnnotation(realController);
 
         // Let's process the events and states first.
         // We look for the State, StartState and Event annotations
@@ -211,7 +203,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
                     checkTransitionAnnotation(method, transition);
             }
         }
-        
+
         switch (annType.strategy()) {
         case NON_REENTRANT:
             this.strategy = new NonReentrantStrategy();
@@ -223,7 +215,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
             strategy = new ReentrantEnqueueStrategy();
             break;
         }
-        
+
         this.stateMachine = new StateMachineImpl(this.definition, this.strategy);
     }
 
@@ -232,8 +224,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
      * machine itself
      */
     public void processEvent(String event, Object object)
-            throws ReentrantTransitionNotAllowed, StateNotDefinedException,
-            EventNotDefinedException, TransitionNotDefinedException {
+            throws ReentrantTransitionNotAllowed, StateMachineDefinitionException {
         this.stateMachine.processEvent(event, object, this, null);
     }
 

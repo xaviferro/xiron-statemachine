@@ -23,10 +23,10 @@ import net.xiron.pattern.statemachine.StateMachineDefinition;
 import net.xiron.pattern.statemachine.StateMachineStrategy;
 import net.xiron.pattern.statemachine.TransitionController;
 import net.xiron.pattern.statemachine.TransitionEvent;
-import net.xiron.pattern.statemachine.TransitionLifecycleController;
+import net.xiron.pattern.statemachine.TransitionObserver;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
-import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
+import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +46,8 @@ public class ReentrantEnqueueStrategy implements StateMachineStrategy {
     @Override
     public void processEvent(StateMachine statemachine, String event,
                              Object object, TransitionController controller,
-                             TransitionLifecycleController lifecycle)
-            throws ReentrantTransitionNotAllowed, EventNotDefinedException,
-            TransitionNotDefinedException 
+                             TransitionObserver lifecycle)
+            throws ReentrantTransitionNotAllowed, StateMachineDefinitionException
     {
         StateMachineDefinition definition = statemachine.getStateMachineDefinition();
         if (!definition.isEvent(event))
@@ -72,9 +71,7 @@ public class ReentrantEnqueueStrategy implements StateMachineStrategy {
                 } while (!this.transitionQueue.isEmpty());
             } catch (ReentrantTransitionNotAllowed t) {
              // TODO. throw t;
-            } catch (EventNotDefinedException t) {
-             // TODO. throw t;
-            } catch (TransitionNotDefinedException t) {
+            } catch (StateMachineDefinitionException t) {
              // TODO. throw t;
             } finally {
                 inTransition = false;

@@ -20,8 +20,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Defines an annotated state machine. The state machine
+ * might contain:
+ * <ul>
+ *  <li>Annotated states {@link State}</li>
+ *  <li>Annotated events {@link Event}</li>
+ *  <li>Annotated transitions {@link Transition}</li>
+ * </ul>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface StateMachine {
+    /**
+     * When defining a state machine, one can define the reentrant/thread
+     * strategy. Read {@link Strategies} in detail
+     */
     Strategies strategy() default Strategies.NON_REENTRANT;
 }

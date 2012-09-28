@@ -15,9 +15,8 @@
  */   
 package net.xiron.pattern.statemachine;
 
-import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
-import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
+import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +49,8 @@ public class StateMachineImpl implements StateMachine {
     public synchronized void processEvent(String event, 
                                           Object object,
                                           TransitionController controller,
-                                          TransitionLifecycleController observer)
-        throws ReentrantTransitionNotAllowed, EventNotDefinedException, TransitionNotDefinedException 
+                                          TransitionObserver observer)
+        throws ReentrantTransitionNotAllowed, StateMachineDefinitionException 
     {
         strategy.processEvent(this, event, object, controller, observer);
     }

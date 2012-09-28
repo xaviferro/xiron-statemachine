@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
+import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 
@@ -37,11 +38,11 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
 
     private String startState;
 
-    private HashMap<String, HashMap<String, String>> states;
+    private HashMap<String, State> states;
     private HashSet<String> events;
 
     public StateMachineDefinitionImpl() {
-        this.states = new HashMap<String, HashMap<String, String>>();
+        this.states = new HashMap<String, State>();
         this.events = new HashSet<String>();
     }
 
@@ -76,30 +77,37 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
     }
 
     @Override
-    public void defineState(String state) {
-        if (state == null)
-            throw new IllegalArgumentException(
-                    "Can not define a state with null value");
-
-        if (!states.containsKey(state))
-            states.put(state, new HashMap<String, String>());
-
-        if (l.isDebugEnabled())
-            l.debug("#defineState succeed for state id " + state);
+    public void defineState(String state) throws StateMachineDefinitionException {
+        this.defineState(state, false, false);
     }
 
     @Override
-    public void setStartState(String state) throws StateNotDefinedException {
-        if (!states.containsKey(state))
-            throw new StateNotDefinedException("Can not set start state to "
-                    + state + " as is not already defined");
+    public void defineState(String state, boolean isStart, boolean isFinal)
+            throws StateMachineDefinitionException {
 
-        startState = state;
+        if (state == null)
+            throw new IllegalArgumentException(
+                    "Can not define a state with null value");
+        
+        if (isStart && startState != null)
+            throw new StateMachineDefinitionException("Cannot define state "
+                    + state + " as start state because " + startState
+                    + " is already defined as the one");
+
+        if (isStart && isFinal)
+            throw new StateMachineDefinitionException("Cannot define state "
+                    + state + " as start and end. It does not make sense");
+
+        if (!states.containsKey(state))
+            states.put(state, new State(state, isFinal));
 
         if (l.isDebugEnabled())
-            l.debug("#setStartState succeed with state id " + state);
+            l.debug("#defineState succeed for state id " + state);
+        
+        if (isStart)
+            this.startState = state;
     }
-    
+
     @Override
     public String getStartState() {
         return this.startState;
@@ -109,7 +117,9 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
     public void defineTransition(String sourceState, String targetState,
                                  String event)
             throws StateNotDefinedException, EventNotDefinedException {
-        if (!states.containsKey(sourceState))
+
+        State source = states.get(sourceState);
+        if (source == null)
             throw new StateNotDefinedException(
                     "Cannot define a transition for a source state "
                             + sourceState + " that doesn't exist");
@@ -124,9 +134,7 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
                     "Cannot define a transition for an event " + event
                             + " that doesn't exist");
 
-        HashMap<String, String> transitions = states.get(sourceState);
-        if (!transitions.containsKey(event))
-            transitions.put(event, targetState);
+        source.defineTransition(sourceState, targetState, event);
     }
 
     /**
@@ -138,22 +146,18 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
      */
     @Override
     public String getTargetState(String source, String event)
-            throws TransitionNotDefinedException {
-        HashMap<String, String> txs = this.states.get(source);
-
+            throws TransitionNotDefinedException, StateNotDefinedException {
+        State src = this.states.get(source);
+        if (src == null)
+            throw new StateNotDefinedException("State " + source + " not defined");
+        
+        HashMap<String, String> txs = src.getTransitions();
         String target = txs.get(event);
         if (target == null)
             throw new TransitionNotDefinedException("Transition from state "
                     + source + " with event " + event + " not defined");
 
         return target;
-    }
-
-    @Override
-    public void setEndState(String state) {
-        throw new Error("setEndState not defined");// TODO Auto-generated method
-                                                   // stub
-
     }
 
     @Override
@@ -169,8 +173,8 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
         List<String> result = Collections.emptyList();
 
         if (this.isState(source)) {
-            HashMap<String, String> events = this.states.get(source);
-            for (String key : events.keySet())
+            HashMap<String, String> transitions = states.get(source).getTransitions();
+            for (String key : transitions.keySet())
                 result.add(key);
         }
 
@@ -185,16 +189,21 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         String NEWLINE = "\n";
-        sb.append("<StateMachine");
+        sb.append("<StateMachineDefinition");
         if (startState != null)
             sb.append(" startState=\"").append(startState).append("\"");
 
         sb.append(">").append(NEWLINE);
 
         sb.append("<States>").append(NEWLINE);
-        for (String state : states.keySet()) {
-            sb.append("<State>").append(state).append("</State>")
-                    .append(NEWLINE);
+        for (State state : states.values()) {
+            if (state.isFinal()) {
+                sb.append("<FinalState>").append(state).append("</FinalState>")
+                        .append(NEWLINE);
+            } else {
+                sb.append("<State>").append(state).append("</State>")
+                        .append(NEWLINE);
+            }
         }
         sb.append("</States>").append(NEWLINE);
 
@@ -206,11 +215,11 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
         sb.append("</Events>").append(NEWLINE);
 
         sb.append("<Transitions>").append(NEWLINE);
-        for (String source : states.keySet()) {
-            HashMap<String, String> txs = states.get(source);
+        for (State state: states.values()) {
+            HashMap<String, String> txs = state.getTransitions();
             for (String event : txs.keySet()) {
                 String target = txs.get(event);
-                sb.append("<Transition ").append("source=\"").append(source)
+                sb.append("<Transition ").append("source=\"").append(state.getName())
                         .append("\" ").append("event=\"").append(event)
                         .append("\" ").append("target=\"").append(target)
                         .append("\"").append(" />").append(NEWLINE);
@@ -218,7 +227,41 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
         }
         sb.append("</Transitions>").append(NEWLINE);
 
-        sb.append("</StateMachine>");
+        sb.append("</StateMachineDefinition>");
         return sb.toString();
+    }
+
+    private class State {
+        private String name;
+        private boolean isFinal;
+        private HashMap<String, String> transitions;
+
+        public State(String name, boolean isFinal) {
+            this.name = name;
+            this.isFinal = isFinal;
+            this.transitions = new HashMap<String, String>();
+        }
+        
+        public String getName() {
+            return this.name;
+        }
+        
+        public boolean isFinal() {
+            return this.isFinal;
+        }
+
+        public void defineTransition(String sourceState, String targetState,
+                                     String event) {
+            if (!transitions.containsKey(event))
+                transitions.put(event, targetState);
+        }
+        
+        public HashMap<String, String> getTransitions() {
+            return this.transitions;
+        }
+        
+        public String toString() {
+            return name;
+        }
     }
 }

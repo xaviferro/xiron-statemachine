@@ -18,6 +18,7 @@ package net.xiron.pattern.statemachine;
 import java.util.List;
 
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
+import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 
@@ -79,8 +80,28 @@ public interface StateMachineDefinition {
      * We need to define the state in order to define transitions later on.
      * Otherwise, we would get an exception
      */
-    public void defineState(String state);
-
+    public void defineState(String state) throws StateMachineDefinitionException;
+    
+    /**
+     * Defining a state. 
+     * 
+     * @param state     the name of the state
+     * @param isStart   if we want the state to be the starting point
+     * @param isEnd     if we want the state to be an ending one
+     * 
+     * @throws StateMachineDefinitionException if any of the following constraints
+     *              are broken:
+     *              <ul>
+     *              <li>if <code>isStart</code>
+     *              is <code>null</code> and <code>isEnd</code> is <code>null</code> as
+     *              well. It wouldn't make sense at all</li>
+     *              <li>if there is a state in the state machine that has been
+     *              marked as a starting one</li>
+     *              </ul>
+     */
+    public void defineState(String state, boolean isStart, boolean isEnd)
+        throws StateMachineDefinitionException;
+    
     /**
      * Is it an already define state?
      */
@@ -91,16 +112,6 @@ public interface StateMachineDefinition {
      */
     public List<String> getStates();
 
-    /**
-     * Select the state where the state machine starts
-     * 
-     * @throws StateNotDefinedException
-     *             in case the state hasn't been previously defined using the
-     *             {@link #defineState(state)} method
-     */
-    public void setStartState(String state) throws StateNotDefinedException;
-    public void setEndState(String state) throws StateNotDefinedException;
-    
     public String getStartState();
     
     /**
@@ -137,5 +148,5 @@ public interface StateMachineDefinition {
      * Returns the state we reach for the specified source state and event
      */
     public String getTargetState(String source, String event)
-            throws TransitionNotDefinedException;
+            throws TransitionNotDefinedException, StateNotDefinedException;
 }
