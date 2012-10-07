@@ -12,72 +12,134 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package net.xiron.pattern.statemachine.strategy;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import net.xiron.pattern.statemachine.StateMachine;
 import net.xiron.pattern.statemachine.StateMachineDefinition;
 import net.xiron.pattern.statemachine.StateMachineStrategy;
 import net.xiron.pattern.statemachine.TransitionController;
-import net.xiron.pattern.statemachine.TransitionEvent;
 import net.xiron.pattern.statemachine.TransitionObserver;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
 import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
+import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This strategy contains a different thread for processing the transitions.
+ * When a final state is reached, this thread will be destroyed.
+ */
 public class ReentrantEnqueueStrategy implements StateMachineStrategy {
-    private static Logger l = LoggerFactory.getLogger(ReentrantEnqueueStrategy.class);
-    
+    private static Logger l = LoggerFactory
+            .getLogger(ReentrantEnqueueStrategy.class);
+
     private NonReentrantStrategy proxiedStrategy;
-    private boolean inTransition = false;
-    private List<TransitionEvent> transitionQueue;
-    
+    //private List<ProcessEvent> transitionQueue;
+    private BlockingQueue<ProcessEvent> pendingEvents;
+    private Thread worker;
+    private StrategyWorker strategyWorker;
+
     public ReentrantEnqueueStrategy() {
         proxiedStrategy = new NonReentrantStrategy();
-        transitionQueue = new ArrayList<TransitionEvent> ();
+        //transitionQueue = new ArrayList<ProcessEvent>();
+        pendingEvents = new LinkedBlockingQueue<ProcessEvent>();
+
+        strategyWorker = new StrategyWorker(pendingEvents);
+        worker = new Thread(strategyWorker);
+        worker.start();
     }
-    
+
     @Override
     public void processEvent(StateMachine statemachine, String event,
                              Object object, TransitionController controller,
                              TransitionObserver lifecycle)
-            throws ReentrantTransitionNotAllowed, StateMachineDefinitionException
-    {
-        StateMachineDefinition definition = statemachine.getStateMachineDefinition();
+            throws ReentrantTransitionNotAllowed,
+            StateMachineDefinitionException {
+        StateMachineDefinition definition = statemachine
+                .getStateMachineDefinition();
         if (!definition.isEvent(event))
-            throw new EventNotDefinedException("Event " + event + " not defined");
-        
-        this.transitionQueue.add(new TransitionEvent(null, event, null, object));
-        
-        boolean goOn = false;
-        synchronized (transitionQueue) {
-            if (!inTransition) {
-                inTransition = true;
-                goOn = true;
-            }
+            throw new EventNotDefinedException("Event " + event
+                    + " not defined");
+
+        try {
+            this.pendingEvents.put(new ProcessEvent(statemachine, event, object,
+                    controller, lifecycle));
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+    }
+
+    public void freeResources() {
         
-        if (goOn) {
+    }
+
+    class ProcessEvent {
+        public ProcessEvent(StateMachine sm, String event, Object object,
+                TransitionController controller, TransitionObserver observer) {
+            super();
+            this.sm = sm;
+            this.event = event;
+            this.object = object;
+            this.controller = controller;
+            this.observer = observer;
+        }
+
+        public StateMachine getStateMachine() {
+            return sm;
+        }
+
+        public String getEvent() {
+            return event;
+        }
+
+        public Object getObject() {
+            return object;
+        }
+
+        public TransitionController getController() {
+            return controller;
+        }
+
+        public TransitionObserver getObserver() {
+            return observer;
+        }
+
+        String event;
+        StateMachine sm;
+        Object object;
+        TransitionController controller;
+        TransitionObserver observer;
+    }
+
+    class StrategyWorker implements Runnable {
+        private final BlockingQueue<ProcessEvent> queue;
+
+        StrategyWorker(BlockingQueue<ProcessEvent> q) {
+            queue = q;
+        }
+
+        public void run() {
             try {
-                do {
-                    TransitionEvent te = this.transitionQueue.remove(0);
-                    this.proxiedStrategy.processEvent(statemachine, te.getEvent(), te.getObject(), controller, lifecycle);
-                } while (!this.transitionQueue.isEmpty());
-            } catch (ReentrantTransitionNotAllowed t) {
-             // TODO. throw t;
-            } catch (StateMachineDefinitionException t) {
-             // TODO. throw t;
-            } finally {
-                inTransition = false;
+                while (true) {
+                    try {
+                        ProcessEvent event = queue.take();
+                        proxiedStrategy.processEvent(event.getStateMachine(),
+                                event.getEvent(), event.getObject(),
+                                event.getController(), event.getObserver());
+                    } catch (StateMachineException sme) {
+                        l.warn("StateMachineEXception", sme);
+                    }
+                }
+            } catch (InterruptedException ex) {
+                l.debug("Interrupted, so cleaning up the queue");
             }
-        } else {
-            l.debug("#processEvent: enqueuing request. size is " + transitionQueue.size());
         }
     }
 }

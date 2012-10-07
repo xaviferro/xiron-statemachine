@@ -22,8 +22,6 @@ import net.xiron.pattern.statemachine.annotations.Strategies;
 
 /**
  * Event is not final
- * 
- * @author xavi.ferro
  */
 @StateMachine(strategy=Strategies.NON_REENTRANT)
 public class IllegalEventAnnotation_01 {

@@ -21,13 +21,13 @@ package net.xiron.pattern.statemachine;
  * 
  * They are executed sequentially:
  * <ul>
- * <li>First, the @link{#phaseExitState} is invoked. The controller can cancel the transition
+ * <li>First, the {@link #phaseExitState} is invoked. The controller can cancel the transition
  *     itself. It is the only phase that allows that</li>
  *     
- * <li>Second, the @link{#phaseTransition} is invoked. It should contain the main work to
+ * <li>Second, the {@link #phaseTransition} is invoked. It should contain the main work to
  *     be performed during a transition</li>
  *     
- * <li>And finally, the @link{#phaseEnterState} is invoked. This method returns a
+ * <li>And finally, the {@link #phaseEnterState} is invoked. This method returns a
  *     {@link PhaseEnterResult} object that might contain a new event to be executed
  *     by the state machine without releasing the lock. This is very useful in certain
  *     circumstances (specially ghost-like condition states that we need to check a lot of
@@ -43,12 +43,12 @@ public interface TransitionController {
      *         <code>false</code> will cancel the transition and will keep the current state as
      *         it was before the transition.
      */
-    boolean exitStatePhase(TransitionEvent event);
+    boolean exitStatePhase(TransitionInfo event);
     
     /**
      * The transition phase itself.
      */
-    void transitionPhase(TransitionEvent event);
+    void transitionPhase(TransitionInfo event);
     
     /**
      * Third step, executed when entering a state.
@@ -57,5 +57,5 @@ public interface TransitionController {
      *         might be other threads trying to perform other transitions-. 
      *         <code>null</code> means we don't want to do anything special.
      */
-    PhaseEnterResult enterStatePhase(TransitionEvent event);
+    PhaseEnterResult enterStatePhase(TransitionInfo event);
 }

@@ -17,7 +17,7 @@ package net.xiron.pattern.statemachine.annotated;
 
 import junit.framework.Assert;
 import net.xiron.pattern.statemachine.PhaseEnterResult;
-import net.xiron.pattern.statemachine.TransitionEvent;
+import net.xiron.pattern.statemachine.TransitionInfo;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
 import net.xiron.pattern.statemachine.annotations.Event;
 import net.xiron.pattern.statemachine.annotations.State;
@@ -44,10 +44,10 @@ public class LegalStateMachineTest {
     
     @Transitions({@Transition(source=STATE_A, target=STATE_B, event=EVENT_AB),
                   @Transition(source=STATE_COND, target=STATE_D, event=EVENT_CD)})
-    public void noop(TransitionEvent tEvent) {}
+    public void noop(TransitionInfo tEvent) {}
     
     @Transition(source=STATE_B,target=STATE_COND,event=EVENT_BC,phase=TransitionPhases.PHASE_ENTER)
-    public PhaseEnterResult transitionBC(TransitionEvent tEvent) {
+    public PhaseEnterResult transitionBC(TransitionInfo tEvent) {
         return new PhaseEnterResult(EVENT_CD, null);
     }
     

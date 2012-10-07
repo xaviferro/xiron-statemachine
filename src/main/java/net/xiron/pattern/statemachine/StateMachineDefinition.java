@@ -106,7 +106,7 @@ public interface StateMachineDefinition {
      * Is it an already define state?
      */
     public boolean isState(String state);
-
+    
     /**
      * Returns a copy of the list of strings
      */
@@ -142,7 +142,7 @@ public interface StateMachineDefinition {
      */
     public void defineTransition(String sourceState, String targetState,
                                  String event)
-            throws StateNotDefinedException, EventNotDefinedException;
+            throws StateNotDefinedException, EventNotDefinedException, StateMachineDefinitionException;
 
     /**
      * Returns the state we reach for the specified source state and event

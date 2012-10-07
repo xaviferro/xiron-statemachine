@@ -16,7 +16,7 @@
 package net.xiron.pattern.statemachine.annotated;
 
 import net.xiron.pattern.statemachine.PhaseEnterResult;
-import net.xiron.pattern.statemachine.TransitionEvent;
+import net.xiron.pattern.statemachine.TransitionInfo;
 import net.xiron.pattern.statemachine.annotations.Event;
 import net.xiron.pattern.statemachine.annotations.State;
 import net.xiron.pattern.statemachine.annotations.StateMachine;
@@ -33,10 +33,10 @@ public class DumbRedirectController {
     @Event public static final String EVENT_AB = "EVENT_AB";
     
     @Transition(source=STATE_A,event=EVENT_AA,target=STATE_A,phase=TransitionPhases.PHASE_ENTER)
-    public PhaseEnterResult transitionAB(TransitionEvent evt) {
+    public PhaseEnterResult transitionAB(TransitionInfo evt) {
         return new PhaseEnterResult(EVENT_AB, null);
     }
     
     @Transition(source=STATE_A,event=EVENT_AB,target=STATE_B,phase=TransitionPhases.PHASE_TRANSITION)
-    public void noop(TransitionEvent evt) {}
+    public void noop(TransitionInfo evt) {}
 }

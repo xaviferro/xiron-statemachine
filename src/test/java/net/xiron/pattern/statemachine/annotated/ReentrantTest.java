@@ -16,7 +16,7 @@
 package net.xiron.pattern.statemachine.annotated;
 
 import junit.framework.Assert;
-import net.xiron.pattern.statemachine.TransitionEvent;
+import net.xiron.pattern.statemachine.TransitionInfo;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
 import net.xiron.pattern.statemachine.annotations.Event;
 import net.xiron.pattern.statemachine.annotations.State;
@@ -40,7 +40,7 @@ public class ReentrantTest {
     private int counter = 0;
     
     @Transition(source=STATE_A,target=STATE_A,event=EVENT_AA)
-    public void transition_AB(TransitionEvent evt) throws StateMachineException {
+    public void transition_AB(TransitionInfo evt) throws StateMachineException {
         if (counter < 10) {
             counter++;
             processor.processEvent(EVENT_AA, null);
@@ -52,7 +52,7 @@ public class ReentrantTest {
     }
     
     @Transition(source=STATE_A,target=STATE_B,event=EVENT_AB)
-    public void noop(TransitionEvent evt) {}
+    public void noop(TransitionInfo evt) {}
     
     @Test
     public void test() throws StateMachineException {

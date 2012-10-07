@@ -28,7 +28,7 @@ import net.xiron.pattern.statemachine.StateMachineDefinitionImpl;
 import net.xiron.pattern.statemachine.StateMachineImpl;
 import net.xiron.pattern.statemachine.StateMachineStrategy;
 import net.xiron.pattern.statemachine.TransitionController;
-import net.xiron.pattern.statemachine.TransitionEvent;
+import net.xiron.pattern.statemachine.TransitionInfo;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.IllegalAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalControllerAnnotationException;
@@ -140,12 +140,12 @@ public class AnnotatedControllerProcessor implements TransitionController {
      * TODO. Define a set of tests for this functionality
      */
     private void checkTransitionAnnotation(Method method, Transition ann)
-            throws StateNotDefinedException, EventNotDefinedException,
+            throws StateMachineDefinitionException,
             IllegalTransitionAnnotationException {
         // First of all, we check the parameters
         Class<?> paramTypes[] = method.getParameterTypes();
         if (paramTypes == null || paramTypes.length != 1
-                || !paramTypes[0].equals(TransitionEvent.class))
+                || !paramTypes[0].equals(TransitionInfo.class))
             throw new IllegalTransitionAnnotationException(
                     "Transition for method "
                             + method.getName()
@@ -224,12 +224,13 @@ public class AnnotatedControllerProcessor implements TransitionController {
      * machine itself
      */
     public void processEvent(String event, Object object)
-            throws ReentrantTransitionNotAllowed, StateMachineDefinitionException {
+            throws ReentrantTransitionNotAllowed,
+            StateMachineDefinitionException {
         this.stateMachine.processEvent(event, object, this, null);
     }
 
     @Override
-    public boolean exitStatePhase(TransitionEvent event) {
+    public boolean exitStatePhase(TransitionInfo event) {
         TransitionDefinition def = transitionDictionary.findBy(
                 event.getSource(), event.getTarget(), event.getEvent(),
                 TransitionPhases.PHASE_EXIT);
@@ -244,7 +245,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
     }
 
     @Override
-    public void transitionPhase(TransitionEvent event) {
+    public void transitionPhase(TransitionInfo event) {
         TransitionDefinition def = transitionDictionary.findBy(
                 event.getSource(), event.getTarget(), event.getEvent(),
                 TransitionPhases.PHASE_TRANSITION);
@@ -256,7 +257,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
     }
 
     @Override
-    public PhaseEnterResult enterStatePhase(TransitionEvent event) {
+    public PhaseEnterResult enterStatePhase(TransitionInfo event) {
         TransitionDefinition def = transitionDictionary.findBy(
                 event.getSource(), event.getTarget(), event.getEvent(),
                 TransitionPhases.PHASE_ENTER);
@@ -307,7 +308,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
             this.instance = instance;
         }
 
-        public boolean executeExitPhase(TransitionEvent evt) {
+        public boolean executeExitPhase(TransitionInfo evt) {
             boolean result = true;
             try {
                 result = (Boolean) method.invoke(instance, evt);
@@ -323,7 +324,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
          * Exceptions at this point are shouldn't be taken into account as we
          * have already checked them when creating them
          */
-        public void executeTransitionPhase(TransitionEvent transitionEvent) {
+        public void executeTransitionPhase(TransitionInfo transitionEvent) {
             try {
                 method.invoke(instance, transitionEvent);
             } catch (IllegalAccessException e) {
@@ -334,7 +335,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
             }
         }
 
-        public PhaseEnterResult executeEnterPhase(TransitionEvent event) {
+        public PhaseEnterResult executeEnterPhase(TransitionInfo event) {
             PhaseEnterResult result = null;
             try {
                 result = (PhaseEnterResult) method.invoke(instance, event);

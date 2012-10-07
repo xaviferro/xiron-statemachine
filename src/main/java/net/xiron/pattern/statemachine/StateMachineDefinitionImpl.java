@@ -80,7 +80,7 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
     public void defineState(String state) throws StateMachineDefinitionException {
         this.defineState(state, false, false);
     }
-
+    
     @Override
     public void defineState(String state, boolean isStart, boolean isFinal)
             throws StateMachineDefinitionException {
@@ -116,7 +116,7 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
     @Override
     public void defineTransition(String sourceState, String targetState,
                                  String event)
-            throws StateNotDefinedException, EventNotDefinedException {
+            throws StateNotDefinedException, EventNotDefinedException, StateMachineDefinitionException {
 
         State source = states.get(sourceState);
         if (source == null)
@@ -134,6 +134,8 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
                     "Cannot define a transition for an event " + event
                             + " that doesn't exist");
 
+        if (source.isFinal())
+            throw new StateMachineDefinitionException("Cannot create transitions from the final state " + sourceState);
         source.defineTransition(sourceState, targetState, event);
     }
 

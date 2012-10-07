@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */   
+ */
 package net.xiron.pattern.statemachine;
 
 import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
@@ -26,50 +26,56 @@ public class StateMachineDefinitionTest {
     public static String STATE_A = "STATE_A";
     public static String STATE_B = "STATE_B";
     public static String STATE_C = "STATE_C";
-    
+
     public static String EVENT_AB = "EVENT_AB";
     public static String EVENT_BC = "EVENT_BC";
     public static String EVENT_BB = "EVENT_BB";
     public static String EVENT_BA = "EVENT_BA";
     public static String EVENT_CC = "EVENT_CC";
-    
-    private StateMachineDefinition definition;
-    
-    private StateMachineDefinition createMachineDefinition() 
-        throws StateMachineDefinitionException
+
+    private StateMachineDefinition createMachineDefinition()
+            throws StateMachineDefinitionException 
     {
-        if (definition == null) {
-            definition = new StateMachineDefinitionImpl();
-            definition.defineEvent(EVENT_AB);
-            definition.defineEvent(EVENT_BC);
-            definition.defineEvent(EVENT_BB);
-            definition.defineEvent(EVENT_BA);
-            
-            definition.defineState(STATE_A, true, false);
-            definition.defineState(STATE_B);
-            definition.defineState(STATE_C, false, true);
-            
-            definition.defineTransition(STATE_A, STATE_B, EVENT_AB);
-            definition.defineTransition(STATE_B, STATE_C, EVENT_BC);
-            definition.defineTransition(STATE_B, STATE_B, EVENT_BB);
-            definition.defineTransition(STATE_B, STATE_A, EVENT_BA);
-            
-            System.err.println(definition);
-        }
+        StateMachineDefinition definition = new StateMachineDefinitionImpl();
+        definition.defineEvent(EVENT_AB);
+        definition.defineEvent(EVENT_BC);
+        definition.defineEvent(EVENT_BB);
+        definition.defineEvent(EVENT_BA);
+
+        definition.defineState(STATE_A, true, false);
+        definition.defineState(STATE_B);
+        definition.defineState(STATE_C, false, true);
+
+        definition.defineTransition(STATE_A, STATE_B, EVENT_AB);
+        definition.defineTransition(STATE_B, STATE_C, EVENT_BC);
+        definition.defineTransition(STATE_B, STATE_B, EVENT_BB);
+        definition.defineTransition(STATE_B, STATE_A, EVENT_BA);
         
         return definition;
     }
-    
-    @Test(expected=TransitionNotDefinedException.class)
-    public void testSuccessfulTransitions() throws StateMachineException {
+
+    @Test(expected = TransitionNotDefinedException.class)
+    public void testNonDefinedTransitions() throws StateMachineException {
         StateMachineDefinition definition = createMachineDefinition();
         NonReentrantStrategy strategy = new NonReentrantStrategy();
         StateMachineImpl sm = new StateMachineImpl(definition, strategy);
-        
+
         DumbController dc = new DumbController(true);
         sm.processEvent(EVENT_AB, null, dc, null);
         sm.processEvent(EVENT_BB, null, dc, null);
         sm.processEvent(EVENT_BC, null, dc, null);
         sm.processEvent(EVENT_AB, null, dc, null);
+    }
+
+    @Test(expected = StateMachineDefinitionException.class)
+    public void testMoreThanOneStartState() throws StateMachineException {
+        StateMachineDefinition definition = createMachineDefinition();
+        definition.defineState(STATE_A, true, false);
+    }
+
+    @Test(expected = StateMachineDefinitionException.class)
+    public void testFinalStateAsStart() throws StateMachineDefinitionException {
+        StateMachineDefinition definition = createMachineDefinition();
+        definition.defineState("STATE_D", true, true);
     }
 }

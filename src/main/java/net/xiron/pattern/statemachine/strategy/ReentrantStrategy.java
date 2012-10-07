@@ -20,7 +20,7 @@ import net.xiron.pattern.statemachine.StateMachine;
 import net.xiron.pattern.statemachine.StateMachineDefinition;
 import net.xiron.pattern.statemachine.StateMachineStrategy;
 import net.xiron.pattern.statemachine.TransitionController;
-import net.xiron.pattern.statemachine.TransitionEvent;
+import net.xiron.pattern.statemachine.TransitionInfo;
 import net.xiron.pattern.statemachine.TransitionObserver;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
@@ -30,7 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Single-thread implementation that doesn't allow reentrant transitions
+ * Single-thread implementation which user can configure whether it allows reentrant 
+ * transitions
  */
 public class ReentrantStrategy implements StateMachineStrategy {
     private static Logger l = LoggerFactory.getLogger(ReentrantStrategy.class);
@@ -38,6 +39,12 @@ public class ReentrantStrategy implements StateMachineStrategy {
     private boolean allowsReentrantTransitions;
     private boolean inTransition = false;
     
+    /**
+     * By default, we don't allow reentrant transitions. That means that if there
+     * is a running transition and the developer, by mistake, tries to push
+     * another transition from the same thread out of the allowed flow, it will
+     * throw an exception
+     */
     public ReentrantStrategy() {
         this(false);
     }
@@ -67,11 +74,10 @@ public class ReentrantStrategy implements StateMachineStrategy {
             inTransition = true;
         }
         
-        
         try {
             String source = statemachine.getCurrentState();
             String target = stateMachineDefinition.getTargetState(source, event);
-            TransitionEvent tEvent = new TransitionEvent(source, event, target, object);
+            TransitionInfo tEvent = new TransitionInfo(source, event, target, object);
             
             if (controller.exitStatePhase(tEvent)) {
                 controller.transitionPhase(tEvent);
