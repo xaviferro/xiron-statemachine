@@ -62,7 +62,7 @@ public class ReentrantEnqueueStrategy implements StateMachineStrategy {
             throws ReentrantTransitionNotAllowed,
             StateMachineDefinitionException {
         StateMachineDefinition definition = statemachine
-                .getStateMachineDefinition();
+                .getDefinition();
         if (!definition.isEvent(event))
             throw new EventNotDefinedException("Event " + event
                     + " not defined");

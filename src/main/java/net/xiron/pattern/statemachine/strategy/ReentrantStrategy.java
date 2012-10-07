@@ -60,7 +60,7 @@ public class ReentrantStrategy implements StateMachineStrategy {
                              TransitionObserver lifecycle)
             throws ReentrantTransitionNotAllowed, StateMachineDefinitionException
     {
-        StateMachineDefinition stateMachineDefinition = statemachine.getStateMachineDefinition();
+        StateMachineDefinition stateMachineDefinition = statemachine.getDefinition();
         if (!stateMachineDefinition.isEvent(event))
             throw new EventNotDefinedException("Event " + event + " not defined");
         

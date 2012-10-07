@@ -15,11 +15,14 @@
  */
 package net.xiron.pattern.statemachine;
 
-import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
 import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
-import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 
+/**
+ * Major entry point for processing events in a state machine. The state machine
+ * is defined by {@link StateMachineDefinition} and the strategy of the machine
+ * is defined by {@link StateMachineStrategy}.
+ */
 public interface StateMachine {
     /**
      * Modifies the current state. A developer should NEVER modify its value
@@ -35,17 +38,15 @@ public interface StateMachine {
     /**
      * Returns the state machine definition 
      */
-    public StateMachineDefinition getStateMachineDefinition();
+    public StateMachineDefinition getDefinition();
 
     /**
-     * Consumes an event
-     * @param event
-     * @param object
-     * @param controller
-     * @param observer
-     * @throws ReentrantTransitionNotAllowed
-     * @throws EventNotDefinedException
-     * @throws TransitionNotDefinedException
+     * Returns the strategy of the state machine
+     */
+    public StateMachineStrategy getStrategy();
+    
+    /**
+     * Consumes an event following the strategy defined by {@link #getStrategy()}
      */
     public void processEvent(String event, Object object,
                              TransitionController controller,
