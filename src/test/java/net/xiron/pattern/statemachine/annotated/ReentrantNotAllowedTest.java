@@ -16,7 +16,7 @@
 package net.xiron.pattern.statemachine.annotated;
 
 import junit.framework.Assert;
-import net.xiron.pattern.statemachine.PhaseEnterResult;
+import net.xiron.pattern.statemachine.EventInfo;
 import net.xiron.pattern.statemachine.TransitionInfo;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
 import net.xiron.pattern.statemachine.annotations.Event;
@@ -41,7 +41,7 @@ public class ReentrantNotAllowedTest {
     private AnnotatedControllerProcessor processor;
     
     @Transition(source=STATE_A,target=STATE_B,event=EVENT_AB,phase=TransitionPhases.PHASE_ENTER) 
-    public PhaseEnterResult transitionAB(TransitionInfo evnt) throws StateMachineException {
+    public EventInfo transitionAB(TransitionInfo evnt) throws StateMachineException {
         processor.processEvent(EVENT_BC, null);
         return null;
     }

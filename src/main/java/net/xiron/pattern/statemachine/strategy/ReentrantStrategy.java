@@ -15,7 +15,7 @@
  */ 
 package net.xiron.pattern.statemachine.strategy;
 
-import net.xiron.pattern.statemachine.PhaseEnterResult;
+import net.xiron.pattern.statemachine.EventInfo;
 import net.xiron.pattern.statemachine.StateMachine;
 import net.xiron.pattern.statemachine.StateMachineDefinition;
 import net.xiron.pattern.statemachine.StateMachineStrategy;
@@ -82,7 +82,7 @@ public class ReentrantStrategy implements StateMachineStrategy {
             if (controller.exitStatePhase(tEvent)) {
                 controller.transitionPhase(tEvent);
                 statemachine.setCurrentState(target);
-                PhaseEnterResult result = controller.enterStatePhase(tEvent);
+                EventInfo result = controller.enterStatePhase(tEvent);
                 if (result != null) {
                     l.debug("#processEvent: Redirecting forced by controller to event " + result.getEvent());
                     inTransition = false; 

@@ -58,6 +58,13 @@ public class ReentrantTest {
     public void test() throws StateMachineException {
         processor = new AnnotatedControllerProcessor(this);
         processor.processEvent(EVENT_AA, null);
-        Assert.assertEquals(processor.getStateMachine().getCurrentState(), STATE_B);
+        synchronized (this) {
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Assert.assertEquals(STATE_B, processor.getStateMachine().getCurrentState());
     }
 }

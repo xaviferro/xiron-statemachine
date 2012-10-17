@@ -28,7 +28,7 @@ package net.xiron.pattern.statemachine;
  *     be performed during a transition</li>
  *     
  * <li>And finally, the {@link #phaseEnterState} is invoked. This method returns a
- *     {@link PhaseEnterResult} object that might contain a new event to be executed
+ *     {@link EventInfo} object that might contain a new event to be executed
  *     by the state machine without releasing the lock. This is very useful in certain
  *     circumstances (specially ghost-like condition states that we need to check a lot of
  *     conditions for performing other actions)</li>
@@ -57,5 +57,5 @@ public interface TransitionController {
      *         might be other threads trying to perform other transitions-. 
      *         <code>null</code> means we don't want to do anything special.
      */
-    PhaseEnterResult enterStatePhase(TransitionInfo event);
+    EventInfo enterStatePhase(TransitionInfo event);
 }

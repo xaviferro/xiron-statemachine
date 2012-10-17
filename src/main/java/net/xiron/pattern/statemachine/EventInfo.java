@@ -16,17 +16,19 @@
 package net.xiron.pattern.statemachine;
 
 /**
+ * Contains all information required for processing an event in a state machine.
+ * 
  * A non null object is returned during the {@link TransitionController#enterStatePhase(TransitionEvent event)}
  * if we want the state machine to process a new event before releasing the lock.
  * 
  * <p>This  is quite useful for some conditional states that might evaluate in runtime next event to be
  * consumed.
  */
-public class PhaseEnterResult {
+public class EventInfo {
     private String event;
     private Object object;
     
-    public PhaseEnterResult(String event, Object object) {
+    public EventInfo(String event, Object object) {
         this.event = event;
         this.object = object;
     }

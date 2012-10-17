@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
-import net.xiron.pattern.statemachine.PhaseEnterResult;
+import net.xiron.pattern.statemachine.EventInfo;
 import net.xiron.pattern.statemachine.StateMachine;
 import net.xiron.pattern.statemachine.StateMachineDefinition;
 import net.xiron.pattern.statemachine.StateMachineDefinitionImpl;
@@ -161,7 +161,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
                                 + " is not well defined. Exit phase must return a boolean");
         } else if (ann.phase().equals(TransitionPhases.PHASE_ENTER)) {
             if (resultType == null
-                    || !resultType.equals(PhaseEnterResult.class))
+                    || !resultType.equals(EventInfo.class))
                 throw new IllegalTransitionAnnotationException(
                         "Transition for method "
                                 + method.getName()
@@ -257,12 +257,12 @@ public class AnnotatedControllerProcessor implements TransitionController {
     }
 
     @Override
-    public PhaseEnterResult enterStatePhase(TransitionInfo event) {
+    public EventInfo enterStatePhase(TransitionInfo event) {
         TransitionDefinition def = transitionDictionary.findBy(
                 event.getSource(), event.getTarget(), event.getEvent(),
                 TransitionPhases.PHASE_ENTER);
 
-        PhaseEnterResult result = null;
+        EventInfo result = null;
         if (def != null) {
             if (l.isDebugEnabled())
                 l.debug("#phaseEnterState: found a match " + event.toString());
@@ -335,10 +335,10 @@ public class AnnotatedControllerProcessor implements TransitionController {
             }
         }
 
-        public PhaseEnterResult executeEnterPhase(TransitionInfo event) {
-            PhaseEnterResult result = null;
+        public EventInfo executeEnterPhase(TransitionInfo event) {
+            EventInfo result = null;
             try {
-                result = (PhaseEnterResult) method.invoke(instance, event);
+                result = (EventInfo) method.invoke(instance, event);
             } catch (IllegalAccessException e) {
                 l.error("#executeEnterPhase error. This should never happen", e);
             } catch (InvocationTargetException e) {

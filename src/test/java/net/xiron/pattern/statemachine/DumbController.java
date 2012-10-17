@@ -43,7 +43,7 @@ public class DumbController implements TransitionController {
             l.debug("#phaseTransition: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
     }
 
-    @Override public PhaseEnterResult enterStatePhase(TransitionInfo evt) {
+    @Override public EventInfo enterStatePhase(TransitionInfo evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseEnterState: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
         
