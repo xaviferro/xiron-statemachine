@@ -17,6 +17,7 @@ package net.xiron.pattern.statemachine.annotated;
 
 import junit.framework.Assert;
 
+import net.xiron.pattern.statemachine.annotated.util.DumbRedirectController;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
 import net.xiron.pattern.statemachine.annotations.StateMachine;
 import net.xiron.pattern.statemachine.annotations.Strategies;

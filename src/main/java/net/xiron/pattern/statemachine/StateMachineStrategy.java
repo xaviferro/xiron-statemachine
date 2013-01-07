@@ -47,7 +47,6 @@ public interface StateMachineStrategy {
     public void processEvent(StateMachine statemachine,
                              String event,
                              Object object,
-                             TransitionController controller,
-                             TransitionObserver lifecycle)
+                             TransitionController controller)
         throws ReentrantTransitionNotAllowed, StateMachineDefinitionException;
 }

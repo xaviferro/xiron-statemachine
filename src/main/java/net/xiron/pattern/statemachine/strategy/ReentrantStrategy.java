@@ -21,7 +21,6 @@ import net.xiron.pattern.statemachine.StateMachineDefinition;
 import net.xiron.pattern.statemachine.StateMachineStrategy;
 import net.xiron.pattern.statemachine.TransitionController;
 import net.xiron.pattern.statemachine.TransitionInfo;
-import net.xiron.pattern.statemachine.TransitionObserver;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
 import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
@@ -56,8 +55,7 @@ public class ReentrantStrategy implements StateMachineStrategy {
     @Override
     public void processEvent(StateMachine statemachine,
                              String event, Object object,
-                             TransitionController controller,
-                             TransitionObserver lifecycle)
+                             TransitionController controller)
             throws ReentrantTransitionNotAllowed, StateMachineDefinitionException
     {
         StateMachineDefinition stateMachineDefinition = statemachine.getDefinition();
@@ -70,9 +68,7 @@ public class ReentrantStrategy implements StateMachineStrategy {
             } else {
                 inTransition = true;
             }    
-        } else {
-            inTransition = true;
-        }
+        } 
         
         try {
             String source = statemachine.getCurrentState();
@@ -90,8 +86,7 @@ public class ReentrantStrategy implements StateMachineStrategy {
                     this.processEvent(statemachine, 
                                       result.getEvent(), 
                                       result.getObject(), 
-                                      controller,
-                                      lifecycle);
+                                      controller);
                 }
             } else {
                 if (l.isDebugEnabled())

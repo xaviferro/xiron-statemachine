@@ -49,8 +49,7 @@ public interface StateMachine {
      * Consumes an event following the strategy defined by {@link #getStrategy()}
      */
     public void processEvent(String event, Object object,
-                             TransitionController controller,
-                             TransitionObserver observer)
+                             TransitionController controller)
             throws ReentrantTransitionNotAllowed, 
                    StateMachineDefinitionException;
 }

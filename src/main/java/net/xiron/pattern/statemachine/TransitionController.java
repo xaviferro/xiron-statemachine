@@ -22,7 +22,7 @@ package net.xiron.pattern.statemachine;
  * They are executed sequentially:
  * <ul>
  * <li>First, the {@link #phaseExitState} is invoked. The controller can cancel the transition
- *     itself. It is the only phase that allows that</li>
+ *     during this phase only.itself. It is the only phase that allows that</li>
  *     
  * <li>Second, the {@link #phaseTransition} is invoked. It should contain the main work to
  *     be performed during a transition</li>

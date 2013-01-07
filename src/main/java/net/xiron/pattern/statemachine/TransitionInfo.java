@@ -23,19 +23,18 @@ import java.util.HashMap;
  * a transition context map which is really helpful when we need to store information
  * between phases of the same transition.
  */
-public class TransitionInfo {
+public class TransitionInfo extends EventInfo {
     private String source;
     private String target;
-    private String event;
-    private Object theObject;
+    
     // We offer a generic repository for all the distinct phases of a transition
     private HashMap<String, Object> transitionContext;
     
     public TransitionInfo(String source, String event, String target, Object object) {
+        super(event, object);
+        
         this.source = source;
-        this.event = event;
         this.target = target;
-        this.theObject = object;
         this.transitionContext = new HashMap<String, Object> ();
     }
     
@@ -47,14 +46,6 @@ public class TransitionInfo {
         return target;
     }
     
-    public String getEvent() {
-        return event;
-    }
-    
-    public Object getObject() {
-        return theObject;
-    }
-    
     public HashMap<String,Object> getTransitionContext() {
         return this.transitionContext;
     }
@@ -62,7 +53,7 @@ public class TransitionInfo {
     @Override 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("source: ").append(source).append(" - event: ").append(event).append(" - target: ").append(target);
+        sb.append("source: ").append(source).append(" - event: ").append(getEvent()).append(" - target: ").append(target);
         return sb.toString();
     }
 }

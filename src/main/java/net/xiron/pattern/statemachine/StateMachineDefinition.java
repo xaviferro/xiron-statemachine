@@ -16,8 +16,12 @@
 package net.xiron.pattern.statemachine;
 
 import java.util.List;
+import java.util.Set;
 
+import net.xiron.pattern.statemachine.exceptions.ConstraintException;
+import net.xiron.pattern.statemachine.exceptions.EventAlreadyExistsException;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
+import net.xiron.pattern.statemachine.exceptions.StateAlreadyExistsException;
 import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
@@ -75,12 +79,11 @@ import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
  * </ul>
  */
 public interface StateMachineDefinition {
-
     /**
      * We need to define the state in order to define transitions later on.
      * Otherwise, we would get an exception
      */
-    public void defineState(String state) throws StateMachineDefinitionException;
+    public void defineState(String state) throws ConstraintException, StateAlreadyExistsException;
     
     /**
      * Defining a state. 
@@ -93,14 +96,14 @@ public interface StateMachineDefinition {
      *              are broken:
      *              <ul>
      *              <li>if <code>isStart</code>
-     *              is <code>null</code> and <code>isEnd</code> is <code>null</code> as
+     *              is <code>true</code> and <code>isEnd</code> is <code>true</code> as
      *              well. It wouldn't make sense at all</li>
      *              <li>if there is a state in the state machine that has been
      *              marked as a starting one</li>
      *              </ul>
      */
     public void defineState(String state, boolean isStart, boolean isEnd)
-        throws StateMachineDefinitionException;
+        throws ConstraintException, StateAlreadyExistsException;
     
     /**
      * Is it an already define state?
@@ -108,17 +111,21 @@ public interface StateMachineDefinition {
     public boolean isState(String state);
     
     /**
-     * Returns a copy of the list of strings
+     * Returns a copy of the list of states
      */
     public List<String> getStates();
 
+    /**
+     * Returns the start state of the state machine. There can only
+     * be one
+     */
     public String getStartState();
     
     /**
      * We need to define the event in order to define transitions later on.
      * Otherwise, we would get an exception
      */
-    public void defineEvent(String event);
+    public void defineEvent(String event) throws EventAlreadyExistsException;
 
     /**
      * Is it an already defined event?
@@ -126,9 +133,9 @@ public interface StateMachineDefinition {
     public boolean isEvent(String event);
 
     /**
-     * Returns a copy of the list of all events defined in the state machine
+     * Returns a copy of the list of all the events
      */
-    public List<String> getEvents();
+    public Set<String> getEvents();
 
     /**
      * Returns a copy of all the events that could be applied to
@@ -142,7 +149,7 @@ public interface StateMachineDefinition {
      */
     public void defineTransition(String sourceState, String targetState,
                                  String event)
-            throws StateNotDefinedException, EventNotDefinedException, StateMachineDefinitionException;
+            throws StateNotDefinedException, EventNotDefinedException, ConstraintException;
 
     /**
      * Returns the state we reach for the specified source state and event

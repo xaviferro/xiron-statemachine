@@ -12,14 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-package net.xiron.pattern.statemachine.annotated;
+ */ 
+package net.xiron.pattern.statemachine.exceptions;
 
-import net.xiron.pattern.statemachine.annotations.Event;
-import net.xiron.pattern.statemachine.annotations.StateMachine;
-import net.xiron.pattern.statemachine.annotations.Strategies;
+public class StateAlreadyExistsException extends StateMachineDefinitionException {
+    private static final long serialVersionUID = 1L;
 
-@StateMachine(strategy=Strategies.NON_REENTRANT)
-public class IllegalEventAnnotation_02 {
-    @Event private final static String EVENT = "EVENT";
+    public StateAlreadyExistsException(String msg) {
+        super(msg);
+    }
 }

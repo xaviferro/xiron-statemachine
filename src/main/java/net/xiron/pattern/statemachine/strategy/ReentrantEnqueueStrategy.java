@@ -22,7 +22,6 @@ import net.xiron.pattern.statemachine.StateMachine;
 import net.xiron.pattern.statemachine.StateMachineDefinition;
 import net.xiron.pattern.statemachine.StateMachineStrategy;
 import net.xiron.pattern.statemachine.TransitionController;
-import net.xiron.pattern.statemachine.TransitionObserver;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
 import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
@@ -57,8 +56,7 @@ public class ReentrantEnqueueStrategy implements StateMachineStrategy {
 
     @Override
     public void processEvent(StateMachine statemachine, String event,
-                             Object object, TransitionController controller,
-                             TransitionObserver lifecycle)
+                             Object object, TransitionController controller)
             throws ReentrantTransitionNotAllowed,
             StateMachineDefinitionException {
         StateMachineDefinition definition = statemachine
@@ -69,26 +67,28 @@ public class ReentrantEnqueueStrategy implements StateMachineStrategy {
 
         try {
             this.pendingEvents.put(new ProcessEvent(statemachine, event, object,
-                    controller, lifecycle));
+                    controller));
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    public void freeResources() {
-        
+    /**
+     * Leverage all resources that this strategy might have acquired
+     */
+    public void cleanUp() {
+        worker.interrupt();
     }
 
     class ProcessEvent {
         public ProcessEvent(StateMachine sm, String event, Object object,
-                TransitionController controller, TransitionObserver observer) {
+                TransitionController controller) {
             super();
             this.sm = sm;
             this.event = event;
             this.object = object;
             this.controller = controller;
-            this.observer = observer;
         }
 
         public StateMachine getStateMachine() {
@@ -107,15 +107,10 @@ public class ReentrantEnqueueStrategy implements StateMachineStrategy {
             return controller;
         }
 
-        public TransitionObserver getObserver() {
-            return observer;
-        }
-
         String event;
         StateMachine sm;
         Object object;
         TransitionController controller;
-        TransitionObserver observer;
     }
 
     class StrategyWorker implements Runnable {
@@ -132,7 +127,7 @@ public class ReentrantEnqueueStrategy implements StateMachineStrategy {
                         ProcessEvent event = queue.take();
                         proxiedStrategy.processEvent(event.getStateMachine(),
                                 event.getEvent(), event.getObject(),
-                                event.getController(), event.getObserver());
+                                event.getController());
                     } catch (StateMachineException sme) {
                         l.warn("StateMachineEXception", sme);
                     }

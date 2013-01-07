@@ -41,19 +41,18 @@ public class StateMachineImpl implements StateMachine {
 
     /**
      * The state machine object is the entry point to the state management world.
-     * The state machine is defined by the {@link StateMachineDefinition}Êand the
+     * The state machine is defined by the {@link StateMachineDefinition} and the
      * execution strategy is defined by {@link StateMachineStrategy}
      * 
      * <p>This method delegates completely on the strategy.
      */
     @Override
     public void processEvent(String event, Object object,
-                             TransitionController controller,
-                             TransitionObserver observer)
+                             TransitionController controller)
             throws ReentrantTransitionNotAllowed,
                    StateMachineDefinitionException 
     {
-        strategy.processEvent(this, event, object, controller, observer);
+        strategy.processEvent(this, event, object, controller);
     }
 
     @Override

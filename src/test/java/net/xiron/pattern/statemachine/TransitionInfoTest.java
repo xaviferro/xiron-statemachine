@@ -12,18 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */   
-package net.xiron.pattern.statemachine.annotated;
+ */ 
+package net.xiron.pattern.statemachine;
 
-import net.xiron.pattern.statemachine.annotations.Event;
-import net.xiron.pattern.statemachine.annotations.StateMachine;
-import net.xiron.pattern.statemachine.annotations.Strategies;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
-
-/**
- * Event is not final
- */
-@StateMachine(strategy=Strategies.NON_REENTRANT)
-public class IllegalEventAnnotation_01 {
-    @Event public static String EVENT_AB = "EVENT_AB";
+public class TransitionInfoTest {
+    @Test
+    public void testTransitionContext() {
+        String source = "SOURCE";
+        String target = "TARGET";
+        String event = "EVENT";
+        TransitionInfo ti = new TransitionInfo(source, event, target, null);
+        ti.getTransitionContext().put("key", "value");
+        
+        assertTrue(ti.getTransitionContext().containsKey("key"));
+    }
 }

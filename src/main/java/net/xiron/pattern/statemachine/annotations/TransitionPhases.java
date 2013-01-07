@@ -22,5 +22,5 @@ package net.xiron.pattern.statemachine.annotations;
 public enum TransitionPhases {
     PHASE_EXIT,
     PHASE_TRANSITION,
-    PHASE_ENTER;
+    PHASE_ENTER
 }

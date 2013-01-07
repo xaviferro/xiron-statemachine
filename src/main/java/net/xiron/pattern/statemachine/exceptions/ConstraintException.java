@@ -12,18 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */   
-package net.xiron.pattern.statemachine.annotated;
-
-import net.xiron.pattern.statemachine.annotations.State;
-import net.xiron.pattern.statemachine.annotations.StateMachine;
-import net.xiron.pattern.statemachine.annotations.Strategies;
-
+ */ 
+package net.xiron.pattern.statemachine.exceptions;
 
 /**
- * State should be a public static String
+ * If any constraint is broken during the definition of a state machine.
  */
-@StateMachine(strategy=Strategies.NON_REENTRANT)
-public class IllegalStateAnnotation_02 {
-    @State public static final int STATE_A = 1;
+public class ConstraintException extends StateMachineDefinitionException {
+    private static final long serialVersionUID = 1L;
+
+    public ConstraintException(String msg) {
+        super(msg);
+    }
 }

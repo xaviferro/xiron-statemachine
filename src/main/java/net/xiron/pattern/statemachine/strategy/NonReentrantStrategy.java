@@ -18,6 +18,6 @@ package net.xiron.pattern.statemachine.strategy;
 
 public class NonReentrantStrategy extends ReentrantStrategy {
     public NonReentrantStrategy() {
-        super(false);
+        super();
     }
 }

@@ -12,9 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */   
-package net.xiron.pattern.statemachine;
+ */ 
+package net.xiron.pattern.statemachine.exceptions;
 
-public interface TransitionObserver {
+public class EventAlreadyExistsException extends
+        StateMachineDefinitionException {
+    private static final long serialVersionUID = 1L;
 
+    public EventAlreadyExistsException(String msg) {
+        super(msg);
+    }
 }

@@ -29,6 +29,7 @@ import net.xiron.pattern.statemachine.StateMachineImpl;
 import net.xiron.pattern.statemachine.StateMachineStrategy;
 import net.xiron.pattern.statemachine.TransitionController;
 import net.xiron.pattern.statemachine.TransitionInfo;
+import net.xiron.pattern.statemachine.exceptions.EventAlreadyExistsException;
 import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.IllegalAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalControllerAnnotationException;
@@ -133,6 +134,10 @@ public class AnnotatedControllerProcessor implements TransitionController {
         } catch (IllegalAccessException e) {
             l.error("ERROR. This should never happen as we have checked the conditions before using reflection",
                     e);
+        } catch (EventAlreadyExistsException e) {
+            throw new IllegalEventAnnotationException("@Event "
+                    + field.getName()
+                    + " has been declared twice");
         }
     }
 
@@ -226,7 +231,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
     public void processEvent(String event, Object object)
             throws ReentrantTransitionNotAllowed,
             StateMachineDefinitionException {
-        this.stateMachine.processEvent(event, object, this, null);
+        this.stateMachine.processEvent(event, object, this);
     }
 
     @Override

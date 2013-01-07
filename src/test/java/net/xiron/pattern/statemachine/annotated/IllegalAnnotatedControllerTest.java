@@ -15,6 +15,11 @@
  */
 package net.xiron.pattern.statemachine.annotated;
 
+import net.xiron.pattern.statemachine.annotated.util.IllegalEventAnnotation_01;
+import net.xiron.pattern.statemachine.annotated.util.IllegalEventAnnotation_02;
+import net.xiron.pattern.statemachine.annotated.util.IllegalStateAnnotation_01;
+import net.xiron.pattern.statemachine.annotated.util.IllegalStateAnnotation_02;
+import net.xiron.pattern.statemachine.annotated.util.IllegalTransitionAnnotation_01;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
 import net.xiron.pattern.statemachine.annotations.StateMachine;
 import net.xiron.pattern.statemachine.annotations.Strategies;
