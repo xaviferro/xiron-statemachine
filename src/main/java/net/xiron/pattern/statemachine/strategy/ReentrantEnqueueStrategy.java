@@ -66,6 +66,7 @@ public class ReentrantEnqueueStrategy implements StateMachineStrategy {
                     + " not defined");
 
         try {
+            l.debug("#processEvent: Adding event to the queue list ", event);
             this.pendingEvents.put(new ProcessEvent(statemachine, event, object,
                     controller));
         } catch (InterruptedException e) {

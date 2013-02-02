@@ -20,9 +20,7 @@ import net.xiron.pattern.statemachine.annotated.util.IllegalEventAnnotation_02;
 import net.xiron.pattern.statemachine.annotated.util.IllegalStateAnnotation_01;
 import net.xiron.pattern.statemachine.annotated.util.IllegalStateAnnotation_02;
 import net.xiron.pattern.statemachine.annotated.util.IllegalTransitionAnnotation_01;
-import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
-import net.xiron.pattern.statemachine.annotations.StateMachine;
-import net.xiron.pattern.statemachine.annotations.Strategies;
+import net.xiron.pattern.statemachine.annotations.AnnotatedControllerFactory;
 import net.xiron.pattern.statemachine.exceptions.IllegalAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalEventAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalStateAnnotationException;
@@ -32,30 +30,33 @@ import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
 import org.junit.Test;
 
-@StateMachine(strategy = Strategies.NON_REENTRANT)
 public class IllegalAnnotatedControllerTest {
     @Test(expected = IllegalEventAnnotationException.class)
     public void testIllegalEvent_01()
             throws StateMachineDefinitionException, IllegalAnnotationException {
-        new AnnotatedControllerProcessor(new IllegalEventAnnotation_01());
+        AnnotatedControllerFactory f = new AnnotatedControllerFactory();
+        f.createNonReentrantProcessor(new IllegalEventAnnotation_01());
     }
 
     @Test(expected = IllegalStateAnnotationException.class)
     public void testIllegalState_01()
             throws StateMachineDefinitionException, IllegalAnnotationException {
-        new AnnotatedControllerProcessor(new IllegalStateAnnotation_01());
+        AnnotatedControllerFactory f = new AnnotatedControllerFactory();
+        f.createNonReentrantProcessor(new IllegalStateAnnotation_01());
     }
 
     @Test(expected = IllegalStateAnnotationException.class)
     public void testIllegalState_02()
             throws StateMachineDefinitionException, IllegalAnnotationException {
-        new AnnotatedControllerProcessor(new IllegalStateAnnotation_02());
+        AnnotatedControllerFactory f = new AnnotatedControllerFactory();
+        f.createNonReentrantProcessor(new IllegalStateAnnotation_02());
     }
 
     @Test(expected = IllegalTransitionAnnotationException.class)
     public void testIllegalTransition_01()
             throws StateMachineDefinitionException, IllegalAnnotationException {
-        new AnnotatedControllerProcessor(new IllegalTransitionAnnotation_01());
+        AnnotatedControllerFactory f = new AnnotatedControllerFactory();
+        f.createNonReentrantProcessor(new IllegalTransitionAnnotation_01());
     }
 
     /**
@@ -63,6 +64,7 @@ public class IllegalAnnotatedControllerTest {
      */
     @Test
     public void testIllegalEvent_02() throws StateMachineException {
-        new AnnotatedControllerProcessor(new IllegalEventAnnotation_02());
+        AnnotatedControllerFactory f = new AnnotatedControllerFactory();
+        f.createNonReentrantProcessor(new IllegalEventAnnotation_02());
     }
 }

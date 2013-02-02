@@ -30,18 +30,12 @@ import net.xiron.pattern.statemachine.StateMachineStrategy;
 import net.xiron.pattern.statemachine.TransitionController;
 import net.xiron.pattern.statemachine.TransitionInfo;
 import net.xiron.pattern.statemachine.exceptions.EventAlreadyExistsException;
-import net.xiron.pattern.statemachine.exceptions.EventNotDefinedException;
 import net.xiron.pattern.statemachine.exceptions.IllegalAnnotationException;
-import net.xiron.pattern.statemachine.exceptions.IllegalControllerAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalEventAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalStateAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.IllegalTransitionAnnotationException;
 import net.xiron.pattern.statemachine.exceptions.ReentrantTransitionNotAllowed;
 import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
-import net.xiron.pattern.statemachine.exceptions.StateNotDefinedException;
-import net.xiron.pattern.statemachine.strategy.NonReentrantStrategy;
-import net.xiron.pattern.statemachine.strategy.ReentrantEnqueueStrategy;
-import net.xiron.pattern.statemachine.strategy.ReentrantStrategy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +58,10 @@ public class AnnotatedControllerProcessor implements TransitionController {
 
     private TransitionDictionary transitionDictionary;
 
-    public AnnotatedControllerProcessor(Object realController)
-            throws StateMachineDefinitionException, IllegalAnnotationException {
+    public AnnotatedControllerProcessor(StateMachineStrategy strategy, Object realController) 
+            throws StateMachineDefinitionException, IllegalAnnotationException 
+    {
+        this.strategy = strategy;
         this.definition = new StateMachineDefinitionImpl();
 
         this.realController = realController;
@@ -89,20 +85,20 @@ public class AnnotatedControllerProcessor implements TransitionController {
                     .isPublic(field.getModifiers()));
     }
 
-    private net.xiron.pattern.statemachine.annotations.StateMachine checkTypeAnnotation(Object object)
-            throws EventNotDefinedException,
-            IllegalControllerAnnotationException, IllegalAnnotationException,
-            StateNotDefinedException {
-        net.xiron.pattern.statemachine.annotations.StateMachine sm = object
-                .getClass()
-                .getAnnotation(
-                        net.xiron.pattern.statemachine.annotations.StateMachine.class);
-        if (sm == null)
-            throw new IllegalControllerAnnotationException(
-                    "Object does not contain any valid controller annotation");
-
-        return sm;
-    }
+//    private net.xiron.pattern.statemachine.annotations.StateMachine checkTypeAnnotation(Object object)
+//            throws EventNotDefinedException,
+//            IllegalControllerAnnotationException, IllegalAnnotationException,
+//            StateNotDefinedException {
+//        net.xiron.pattern.statemachine.annotations.StateMachine sm = object
+//                .getClass()
+//                .getAnnotation(
+//                        net.xiron.pattern.statemachine.annotations.StateMachine.class);
+//        if (sm == null)
+//            throw new IllegalControllerAnnotationException(
+//                    "Object does not contain any valid controller annotation");
+//
+//        return sm;
+//    }
 
     private void checkStateAnnotation(Field field, State ann)
             throws IllegalStateAnnotationException,
@@ -182,8 +178,8 @@ public class AnnotatedControllerProcessor implements TransitionController {
             IllegalTransitionAnnotationException, IllegalAnnotationException {
         Class<?> clazz = realController.getClass();
 
-        net.xiron.pattern.statemachine.annotations.StateMachine annType = this
-                .checkTypeAnnotation(realController);
+        /*net.xiron.pattern.statemachine.annotations.StateMachine annType = this
+                .checkTypeAnnotation(realController);*/
 
         // Let's process the events and states first.
         // We look for the State, StartState and Event annotations
@@ -209,7 +205,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
             }
         }
 
-        switch (annType.strategy()) {
+        /*switch (annType.strategy()) {
         case NON_REENTRANT:
             this.strategy = new NonReentrantStrategy();
             break;
@@ -219,7 +215,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
         case ENQUEUE:
             strategy = new ReentrantEnqueueStrategy();
             break;
-        }
+        }*/
 
         this.stateMachine = new StateMachineImpl(this.definition, this.strategy);
     }

@@ -17,17 +17,15 @@ package net.xiron.pattern.statemachine.strategy;
 
 import junit.framework.Assert;
 import net.xiron.pattern.statemachine.TransitionInfo;
+import net.xiron.pattern.statemachine.annotations.AnnotatedControllerFactory;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
 import net.xiron.pattern.statemachine.annotations.Event;
 import net.xiron.pattern.statemachine.annotations.State;
-import net.xiron.pattern.statemachine.annotations.StateMachine;
-import net.xiron.pattern.statemachine.annotations.Strategies;
 import net.xiron.pattern.statemachine.annotations.Transition;
 import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
 import org.junit.Test;
 
-@StateMachine(strategy=Strategies.ENQUEUE)
 public class ReentrantEnqueueStrategyTest {
     @State(isStart=true) public static final String STATE_A = "STATE_A";
     @State public static final String STATE_B = "STATE_B";
@@ -56,11 +54,12 @@ public class ReentrantEnqueueStrategyTest {
     
     @Test
     public void test() throws StateMachineException {
-        processor = new AnnotatedControllerProcessor(this);
+        AnnotatedControllerFactory f = new AnnotatedControllerFactory();
+        processor = f.createEnqueueProcessor(this);
         processor.processEvent(EVENT_AA, null);
         synchronized (this) {
             try {
-                Thread.sleep(1000L);
+                Thread.sleep(2000L);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

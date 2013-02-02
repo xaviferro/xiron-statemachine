@@ -18,11 +18,10 @@ package net.xiron.pattern.statemachine.annotated;
 import junit.framework.Assert;
 import net.xiron.pattern.statemachine.EventInfo;
 import net.xiron.pattern.statemachine.TransitionInfo;
+import net.xiron.pattern.statemachine.annotations.AnnotatedControllerFactory;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
 import net.xiron.pattern.statemachine.annotations.Event;
 import net.xiron.pattern.statemachine.annotations.State;
-import net.xiron.pattern.statemachine.annotations.StateMachine;
-import net.xiron.pattern.statemachine.annotations.Strategies;
 import net.xiron.pattern.statemachine.annotations.Transition;
 import net.xiron.pattern.statemachine.annotations.TransitionPhases;
 import net.xiron.pattern.statemachine.annotations.Transitions;
@@ -30,7 +29,6 @@ import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
 import org.junit.Test;
 
-@StateMachine(strategy=Strategies.NON_REENTRANT)
 public class LegalStateMachineTest {
     @State(isStart=true) public static final String STATE_A = "STATE_A";
     @State public static final String STATE_B = "STATE_B";
@@ -53,7 +51,8 @@ public class LegalStateMachineTest {
     
     @Test
     public void test() throws StateMachineException {
-        AnnotatedControllerProcessor p = new AnnotatedControllerProcessor(this);
+        AnnotatedControllerFactory f = new AnnotatedControllerFactory();
+        AnnotatedControllerProcessor p = f.createNonReentrantProcessor(this);
         p.processEvent(EVENT_AB, null);
         p.processEvent(EVENT_BC, null);
         
