@@ -15,6 +15,9 @@
  */ 
 package net.xiron.pattern.statemachine.strategy;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+
 import net.xiron.pattern.statemachine.EventInfo;
 import net.xiron.pattern.statemachine.StateMachine;
 import net.xiron.pattern.statemachine.StateMachineDefinition;
@@ -35,6 +38,7 @@ import org.slf4j.LoggerFactory;
 public class ReentrantStrategy implements StateMachineStrategy {
     private static Logger l = LoggerFactory.getLogger(ReentrantStrategy.class);
     
+    private ReentrantLock lock = new ReentrantLock();
     private boolean allowsReentrantTransitions;
     private boolean inTransition = false;
     
@@ -62,15 +66,17 @@ public class ReentrantStrategy implements StateMachineStrategy {
         if (!stateMachineDefinition.isEvent(event))
             throw new EventNotDefinedException("Event " + event + " not defined");
         
-        if (!allowsReentrantTransitions) {
-            if (inTransition) {
-                throw new ReentrantTransitionNotAllowed("Reentrance from the same thread is not allowed");
-            } else {
-                inTransition = true;
-            }    
-        } 
-        
         try {
+            lock.tryLock(0, TimeUnit.SECONDS); // Fair approach when locking resources
+            
+            if (!allowsReentrantTransitions) {
+                if (inTransition) {
+                    throw new ReentrantTransitionNotAllowed("Reentrance from the same thread is not allowed");
+                } else {
+                    inTransition = true;
+                }    
+            } 
+        
             String source = statemachine.getCurrentState();
             String target = stateMachineDefinition.getTargetState(source, event);
             TransitionInfo tEvent = new TransitionInfo(source, event, target, object);
@@ -92,8 +98,11 @@ public class ReentrantStrategy implements StateMachineStrategy {
                 if (l.isDebugEnabled())
                     l.debug("#processEvent: transition cancelled on exit state phase");
             }
+        } catch (InterruptedException ie) {
+            l.warn("#processEvent: interrupted exception might not happen");
         } finally {
             inTransition = false;
+            lock.unlock();
         }
     }
 }

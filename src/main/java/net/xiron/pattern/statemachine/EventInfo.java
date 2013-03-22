@@ -16,9 +16,11 @@
 package net.xiron.pattern.statemachine;
 
 /**
- * Contains all information required for processing an event in a state machine.
+ * <p>Con<tains all information required for processing an event in a state machine. An event
+ * is defined by an event identifier and an object -it might be null- that will be useful
+ * when processing the transition (some kind of state).
  * 
- * A non null object is returned during the {@link TransitionController#enterStatePhase(TransitionEvent event)}
+ * <p>A non null object is returned during the {@link TransitionController#enterStatePhase(TransitionEvent event)}
  * if we want the state machine to process a new event before releasing the lock.
  * 
  * <p>This  is quite useful for some conditional states that might evaluate in runtime next event to be
