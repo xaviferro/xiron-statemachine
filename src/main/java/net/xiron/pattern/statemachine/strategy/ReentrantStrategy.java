@@ -56,7 +56,6 @@ public class ReentrantStrategy implements StateMachineStrategy {
         this.allowsReentrantTransitions = allowsReentrant;
     }
     
-    @Override
     public void processEvent(StateMachine statemachine,
                              String event, Object object,
                              TransitionController controller)
@@ -67,7 +66,9 @@ public class ReentrantStrategy implements StateMachineStrategy {
             throw new EventNotDefinedException("Event " + event + " not defined");
         
         try {
-            lock.tryLock(0, TimeUnit.SECONDS); // Fair approach when locking resources
+            // More fair approach when locking resources than
+            // the normal tryLock one
+            lock.tryLock(0, TimeUnit.SECONDS); 
             
             if (!allowsReentrantTransitions) {
                 if (inTransition) {

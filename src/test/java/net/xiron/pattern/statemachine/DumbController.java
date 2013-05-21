@@ -31,19 +31,19 @@ public class DumbController implements TransitionController {
         this.phaseExit = phaseExit;
     }
     
-    @Override public boolean exitStatePhase(TransitionInfo evt) {
+    public boolean exitStatePhase(TransitionInfo evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseExitState: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
         
         return phaseExit;
     }
 
-    @Override public void transitionPhase(TransitionInfo evt) {
+    public void transitionPhase(TransitionInfo evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseTransition: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
     }
 
-    @Override public EventInfo enterStatePhase(TransitionInfo evt) {
+    public EventInfo enterStatePhase(TransitionInfo evt) {
         if (l.isDebugEnabled())
             l.debug("#phaseEnterState: " + evt.getSource() + " + " + evt.getEvent() + " -> " + evt.getTarget());
         

@@ -28,31 +28,31 @@ import net.xiron.pattern.statemachine.exceptions.IllegalTransitionAnnotationExce
 import net.xiron.pattern.statemachine.exceptions.StateMachineDefinitionException;
 import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class IllegalAnnotatedControllerTest {
-    @Test(expected = IllegalEventAnnotationException.class)
+    @Test(expectedExceptions = IllegalEventAnnotationException.class)
     public void testIllegalEvent_01()
             throws StateMachineDefinitionException, IllegalAnnotationException {
         AnnotatedControllerFactory f = new AnnotatedControllerFactory();
         f.createNonReentrantProcessor(new IllegalEventAnnotation_01());
     }
 
-    @Test(expected = IllegalStateAnnotationException.class)
+    @Test(expectedExceptions = IllegalStateAnnotationException.class)
     public void testIllegalState_01()
             throws StateMachineDefinitionException, IllegalAnnotationException {
         AnnotatedControllerFactory f = new AnnotatedControllerFactory();
         f.createNonReentrantProcessor(new IllegalStateAnnotation_01());
     }
 
-    @Test(expected = IllegalStateAnnotationException.class)
+    @Test(expectedExceptions = IllegalStateAnnotationException.class)
     public void testIllegalState_02()
             throws StateMachineDefinitionException, IllegalAnnotationException {
         AnnotatedControllerFactory f = new AnnotatedControllerFactory();
         f.createNonReentrantProcessor(new IllegalStateAnnotation_02());
     }
 
-    @Test(expected = IllegalTransitionAnnotationException.class)
+    @Test(expectedExceptions = IllegalTransitionAnnotationException.class)
     public void testIllegalTransition_01()
             throws StateMachineDefinitionException, IllegalAnnotationException {
         AnnotatedControllerFactory f = new AnnotatedControllerFactory();

@@ -46,7 +46,6 @@ public class StateMachineImpl implements StateMachine {
      * 
      * <p>This method delegates completely on the strategy.
      */
-    @Override
     public void processEvent(String event, Object object,
                              TransitionController controller)
             throws ReentrantTransitionNotAllowed,
@@ -55,22 +54,18 @@ public class StateMachineImpl implements StateMachine {
         strategy.processEvent(this, event, object, controller);
     }
 
-    @Override
     public StateMachineDefinition getDefinition() {
         return this.definition;
     }
 
-    @Override
     public StateMachineStrategy getStrategy() {
         return this.strategy;
     }
 
-    @Override
     public String getCurrentState() {
         return currentState;
     }
 
-    @Override
     public void setCurrentState(String currentState) {
         l.debug("#setCurrentState: " + currentState);
         this.currentState = currentState;
@@ -80,7 +75,6 @@ public class StateMachineImpl implements StateMachine {
      * Returns the state machine definition in a XML format. This is not a cheap
      * operation.
      */
-    @Override
     public String toString() {
         return this.definition.toString();
     }

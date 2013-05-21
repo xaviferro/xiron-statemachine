@@ -15,7 +15,6 @@
  */
 package net.xiron.pattern.statemachine.strategy;
 
-import junit.framework.Assert;
 import net.xiron.pattern.statemachine.EventInfo;
 import net.xiron.pattern.statemachine.TransitionInfo;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerFactory;
@@ -26,7 +25,8 @@ import net.xiron.pattern.statemachine.annotations.Transition;
 import net.xiron.pattern.statemachine.annotations.TransitionPhases;
 import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class NonReentrantStrategyTest {
     @State(isStart = true)

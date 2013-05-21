@@ -15,18 +15,18 @@
  */ 
 package net.xiron.pattern.statemachine;
 
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class TransitionInfoTest {
     @Test
-    public void testTransitionContext() {
+	public void testTransitionContext() {
         String source = "SOURCE";
         String target = "TARGET";
         String event = "EVENT";
         TransitionInfo ti = new TransitionInfo(source, event, target, null);
         ti.getTransitionContext().put("key", "value");
         
-        assertTrue(ti.getTransitionContext().containsKey("key"));
+        Assert.assertTrue(ti.getTransitionContext().containsKey("key"));
     }
 }

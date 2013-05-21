@@ -15,7 +15,6 @@
  */ 
 package net.xiron.pattern.statemachine.strategy;
 
-import junit.framework.Assert;
 import net.xiron.pattern.statemachine.TransitionInfo;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerFactory;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
@@ -24,7 +23,8 @@ import net.xiron.pattern.statemachine.annotations.State;
 import net.xiron.pattern.statemachine.annotations.Transition;
 import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class ReentrantEnqueueStrategyTest {
     @State(isStart=true) public static final String STATE_A = "STATE_A";

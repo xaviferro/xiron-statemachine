@@ -15,7 +15,8 @@
  */
 package net.xiron.pattern.statemachine;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
+
 import net.xiron.pattern.statemachine.exceptions.ConstraintException;
 import net.xiron.pattern.statemachine.exceptions.EventAlreadyExistsException;
 import net.xiron.pattern.statemachine.exceptions.StateAlreadyExistsException;
@@ -24,8 +25,8 @@ import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 import net.xiron.pattern.statemachine.exceptions.TransitionNotDefinedException;
 import net.xiron.pattern.statemachine.strategy.NonReentrantStrategy;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class StateMachineDefinitionTest {
     public static String STATE_A = "STATE_A";
@@ -61,27 +62,27 @@ public class StateMachineDefinitionTest {
         return definition;
     }
     
-    @Before
+    @BeforeMethod
     public void beforeAnyMethod() throws StateMachineDefinitionException {
         definition = createMachineDefinition();        
     }
     
-    @Test(expected = ConstraintException.class)
+    @Test(expectedExceptions = ConstraintException.class)
     public void testDefineStateAsStartAndFinal() throws StateMachineDefinitionException {
         definition.defineState("DOHH", true, true);
     }
     
-    @Test(expected = StateMachineDefinitionException.class)
+    @Test(expectedExceptions = StateMachineDefinitionException.class)
     public void testAddTransitionToFinalState() throws StateMachineDefinitionException {
         definition.defineTransition(STATE_C, STATE_A, EVENT_AB);
     }
     
-    @Test(expected = StateAlreadyExistsException.class) 
+    @Test(expectedExceptions = StateAlreadyExistsException.class) 
     public void testStateAlreadyExists() throws StateMachineDefinitionException {
         definition.defineState(STATE_A);
     }
     
-    @Test(expected = EventAlreadyExistsException.class)
+    @Test(expectedExceptions = EventAlreadyExistsException.class)
     public void testEventAlreadyExists() throws StateMachineDefinitionException {
         definition.defineEvent(EVENT_AB);
     }
@@ -122,39 +123,39 @@ public class StateMachineDefinitionTest {
         assertEquals(4, definition.getEvents().size());
     }
     
-    @Test(expected = StateMachineDefinitionException.class)
+    @Test(expectedExceptions = StateMachineDefinitionException.class)
     public void testStateIsStartAndFinal() throws StateMachineDefinitionException {
         StateMachineDefinition def = new StateMachineDefinitionImpl();
         def.defineState("TEST", true, true);
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testDefineNullEvent() throws StateMachineException {
         definition.defineEvent(null);
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testDefineNullState() throws StateMachineException {
         definition.defineState(null);
     }
     
-    @Test(expected = StateMachineDefinitionException.class)
+    @Test(expectedExceptions = StateMachineDefinitionException.class)
     public void testDefineTransitionWithNullSourceState() throws StateMachineDefinitionException {
         definition.defineTransition(null, STATE_B, EVENT_AB);
     }
     
-    @Test(expected = StateMachineDefinitionException.class)
+    @Test(expectedExceptions = StateMachineDefinitionException.class)
     public void testDefineTransitionWithNullTargetState() throws StateMachineDefinitionException {
         definition.toString();
         definition.defineTransition(STATE_A, null, EVENT_AB);
     }
     
-    @Test(expected = StateMachineDefinitionException.class)
+    @Test(expectedExceptions = StateMachineDefinitionException.class)
     public void testDefineTransitionWithNullEvent() throws StateMachineDefinitionException {
         definition.defineTransition(STATE_A, STATE_B, null);
     }
 
-    @Test(expected = TransitionNotDefinedException.class)
+    @Test(expectedExceptions = TransitionNotDefinedException.class)
     public void testNonDefinedTransitions() throws StateMachineException {
         StateMachineDefinition definition = createMachineDefinition();
         NonReentrantStrategy strategy = new NonReentrantStrategy();
@@ -167,12 +168,12 @@ public class StateMachineDefinitionTest {
         sm.processEvent(EVENT_AB, null, dc);
     }
 
-    @Test(expected = StateMachineDefinitionException.class)
+    @Test(expectedExceptions = StateMachineDefinitionException.class)
     public void testMoreThanOneStartState() throws StateMachineException {
         definition.defineState(STATE_A, true, false);
     }
 
-    @Test(expected = StateMachineDefinitionException.class)
+    @Test(expectedExceptions = StateMachineDefinitionException.class)
     public void testFinalStateAsStart() throws StateMachineDefinitionException {
         definition.defineState("STATE_D", true, true);
     }

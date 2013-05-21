@@ -54,7 +54,6 @@ public class ReentrantEnqueueStrategy implements StateMachineStrategy {
         worker.start();
     }
 
-    @Override
     public void processEvent(StateMachine statemachine, String event,
                              Object object, TransitionController controller)
             throws ReentrantTransitionNotAllowed,

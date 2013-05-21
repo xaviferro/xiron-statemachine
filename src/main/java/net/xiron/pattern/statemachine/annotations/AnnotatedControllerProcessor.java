@@ -84,22 +84,7 @@ public class AnnotatedControllerProcessor implements TransitionController {
                 && Modifier.isFinal(field.getModifiers()) && Modifier
                     .isPublic(field.getModifiers()));
     }
-
-//    private net.xiron.pattern.statemachine.annotations.StateMachine checkTypeAnnotation(Object object)
-//            throws EventNotDefinedException,
-//            IllegalControllerAnnotationException, IllegalAnnotationException,
-//            StateNotDefinedException {
-//        net.xiron.pattern.statemachine.annotations.StateMachine sm = object
-//                .getClass()
-//                .getAnnotation(
-//                        net.xiron.pattern.statemachine.annotations.StateMachine.class);
-//        if (sm == null)
-//            throw new IllegalControllerAnnotationException(
-//                    "Object does not contain any valid controller annotation");
-//
-//        return sm;
-//    }
-
+    
     private void checkStateAnnotation(Field field, State ann)
             throws IllegalStateAnnotationException,
             StateMachineDefinitionException {
@@ -230,7 +215,6 @@ public class AnnotatedControllerProcessor implements TransitionController {
         this.stateMachine.processEvent(event, object, this);
     }
 
-    @Override
     public boolean exitStatePhase(TransitionInfo event) {
         TransitionDefinition def = transitionDictionary.findBy(
                 event.getSource(), event.getTarget(), event.getEvent(),
@@ -245,7 +229,6 @@ public class AnnotatedControllerProcessor implements TransitionController {
         return result;
     }
 
-    @Override
     public void transitionPhase(TransitionInfo event) {
         TransitionDefinition def = transitionDictionary.findBy(
                 event.getSource(), event.getTarget(), event.getEvent(),
@@ -257,7 +240,6 @@ public class AnnotatedControllerProcessor implements TransitionController {
         }
     }
 
-    @Override
     public EventInfo enterStatePhase(TransitionInfo event) {
         TransitionDefinition def = transitionDictionary.findBy(
                 event.getSource(), event.getTarget(), event.getEvent(),

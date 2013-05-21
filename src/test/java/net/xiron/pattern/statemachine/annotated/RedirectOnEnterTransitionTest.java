@@ -20,11 +20,11 @@ import net.xiron.pattern.statemachine.annotated.util.DumbRedirectController;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerFactory;
 import net.xiron.pattern.statemachine.annotations.AnnotatedControllerProcessor;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class RedirectOnEnterTransitionTest {
     @Test
-    public void testRedirect() throws Exception {
+	public void testRedirect() throws Exception {
         AnnotatedControllerFactory f = new AnnotatedControllerFactory();
         AnnotatedControllerProcessor processor = f.createNonReentrantProcessor(new DumbRedirectController());
         processor.processEvent(DumbRedirectController.EVENT_AA, null);

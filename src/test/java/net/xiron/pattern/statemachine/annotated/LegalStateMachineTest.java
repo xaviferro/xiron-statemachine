@@ -27,7 +27,8 @@ import net.xiron.pattern.statemachine.annotations.TransitionPhases;
 import net.xiron.pattern.statemachine.annotations.Transitions;
 import net.xiron.pattern.statemachine.exceptions.StateMachineException;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
+
 
 public class LegalStateMachineTest {
     @State(isStart=true) public static final String STATE_A = "STATE_A";

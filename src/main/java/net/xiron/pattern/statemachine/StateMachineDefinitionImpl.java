@@ -49,17 +49,14 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
         this.events = new HashSet<String>();
     }
 
-    @Override
     public boolean isEvent(String event) {
         return this.events.contains(event);
     }
 
-    @Override
     public boolean isState(String state) {
         return this.states.containsKey(state);
     }
 
-    @Override
     public void defineEvent(String event) throws EventAlreadyExistsException {
         if (event == null)
             throw new IllegalArgumentException(
@@ -72,18 +69,15 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
         l.debug("#defineEvent succeed for event id " + event);
     }
 
-    @Override
     public Set<String> getEvents() {
         return Collections.unmodifiableSet(events);
     }
 
-    @Override
     public void defineState(String state)
             throws StateAlreadyExistsException, ConstraintException {
         this.defineState(state, false, false);
     }
 
-    @Override
     public void defineState(String state, boolean isStart, boolean isFinal)
             throws StateAlreadyExistsException, ConstraintException {
 
@@ -113,12 +107,10 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
             this.startState = state;
     }
 
-    @Override
     public String getStartState() {
         return this.startState;
     }
 
-    @Override
     public void defineTransition(String sourceState, String targetState,
                                  String event)
             throws StateNotDefinedException, EventNotDefinedException,
@@ -154,7 +146,6 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
      * @throws TransitionNotDefinedException
      *             in case the transition does not exist
      */
-    @Override
     public String getTargetState(String source, String event)
             throws TransitionNotDefinedException, StateNotDefinedException {
         State src = this.states.get(source);
@@ -171,7 +162,6 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
         return target;
     }
 
-    @Override
     public List<String> getStates() {
         ArrayList<String> result = new ArrayList<String>();
         for (String key : states.keySet())
@@ -179,7 +169,6 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
         return result;
     }
 
-    @Override
     public List<String> getEvents(String source) {
         List<String> result = new ArrayList<String>();
 
