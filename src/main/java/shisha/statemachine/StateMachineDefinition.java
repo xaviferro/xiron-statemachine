@@ -18,11 +18,6 @@ package shisha.statemachine;
 import java.util.List;
 import java.util.Set;
 
-import shisha.statemachine.exceptions.ConstraintException;
-import shisha.statemachine.exceptions.EventAlreadyExistsException;
-import shisha.statemachine.exceptions.EventNotDefinedException;
-import shisha.statemachine.exceptions.StateAlreadyExistsException;
-import shisha.statemachine.exceptions.StateMachineDefinitionException;
 import shisha.statemachine.exceptions.StateNotDefinedException;
 import shisha.statemachine.exceptions.TransitionNotDefinedException;
 
@@ -80,49 +75,6 @@ import shisha.statemachine.exceptions.TransitionNotDefinedException;
  * </ul>
  */
 public interface StateMachineDefinition {
-    /**
-     * We need to define the state in order to define transitions later on.
-     * Otherwise, we would get an exception
-     */
-    public void defineState(String state) throws ConstraintException, StateAlreadyExistsException;
-
-    /**
-     * Defining a state.
-     * 
-     * @param state
-     *            the name of the state
-     * @param isStart
-     *            if we want the state to be the starting point
-     * @param isFinal
-     *            if we want the state to be an ending one
-     * 
-     * @throws StateMachineDefinitionException
-     *             if any of the following constraints are broken:
-     *             <ul>
-     *             <li>if <code>isStart</code> is <code>true</code> and
-     *             <code>isFinal</code> is <code>true</code> as well. It
-     *             wouldn't make sense at all</li>
-     *             <li>if there is a state in the state machine that has been
-     *             marked as a starting one</li>
-     *             </ul>
-     */
-    public void defineState(String state, boolean isStart, boolean isFinal) throws ConstraintException,
-            StateAlreadyExistsException;
-
-    
-    /**
-     * We need to define the event in order to define transitions later on.
-     * Otherwise, we would get an exception
-     */
-    public void defineEvent(String event) throws EventAlreadyExistsException;
-    
-    /**
-     * Defining a transition. We must explicitly do it, otherwise any event that
-     * provokes a transition that is not defined will raise an exception
-     */
-    public void defineTransition(String sourceState, String targetState, String event) throws StateNotDefinedException,
-            EventNotDefinedException, ConstraintException;
-    
     /**
      * Is it an already define state?
      */

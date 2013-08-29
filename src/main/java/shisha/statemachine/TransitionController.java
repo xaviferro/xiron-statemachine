@@ -37,27 +37,5 @@ package shisha.statemachine;
  * </ul>
  */
 public interface TransitionController {
-    /**
-     * First phase of the transition.The one and only phase that allows cancelling the transition. 
-     * Returning false will stop the event propagation.
-     * 
-     * @return <code>true</code> in case we want to continue with the transition. 
-     *         <code>false</code> will cancel the transition and will keep the current state as
-     *         it was before the transition.
-     */
-    boolean exitStatePhase(TransitionInfo event);
-    
-    /**
-     * The transition phase itself.
-     */
-    void transitionPhase(TransitionInfo event);
-    
-    /**
-     * Third step, executed when entering a state.
-     * 
-     * @return the event we want to execute next right after this transition -as there
-     *         might be other threads trying to perform other transitions-. 
-     *         <code>null</code> means we don't want to do anything special.
-     */
-    EventInfo enterStatePhase(TransitionInfo event);
+    void execute(TransitionInfo event);
 }

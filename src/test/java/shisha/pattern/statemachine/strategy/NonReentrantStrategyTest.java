@@ -15,21 +15,20 @@
  */
 package shisha.pattern.statemachine.strategy;
 
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import shisha.statemachine.EventInfo;
+import shisha.statemachine.StateMachine;
+import shisha.statemachine.StateMachines;
 import shisha.statemachine.TransitionInfo;
-import shisha.statemachine.annotations.AnnotatedControllerFactory;
-import shisha.statemachine.annotations.AnnotatedControllerProcessor;
 import shisha.statemachine.annotations.Event;
 import shisha.statemachine.annotations.State;
 import shisha.statemachine.annotations.Transition;
-import shisha.statemachine.annotations.TransitionPhases;
 import shisha.statemachine.exceptions.EventNotDefinedException;
 import shisha.statemachine.exceptions.StateMachineException;
 
+@shisha.statemachine.annotations.AStateMachine
 public class NonReentrantStrategyTest {
     @State(isStart = true)
     public static final String STATE_A = "STATE_A";
@@ -43,30 +42,24 @@ public class NonReentrantStrategyTest {
     @Event
     public static final String EVENT_BC = "EVENT_BC";
 
-    private AnnotatedControllerProcessor processor;
+    private StateMachine sm;
 
-    @Transition(source = STATE_A, target = STATE_B, event = EVENT_AB, phase = TransitionPhases.PHASE_ENTER)
-    public EventInfo transitionAB(TransitionInfo evnt)
-            throws StateMachineException {
-        processor.processEvent(EVENT_BC, null);
+    @Transition(source = STATE_A, target = STATE_B, event = EVENT_AB)
+    public EventInfo transitionAB(TransitionInfo evnt) throws StateMachineException {
+        sm.processEvent(EVENT_BC, null);
         return null;
     }
 
     @Test
     public void testDefinedTransition() throws StateMachineException {
-        AnnotatedControllerFactory f = new AnnotatedControllerFactory();
-        this.processor = f
-                .createNonReentrantStateMachine(this);
-        this.processor.processEvent(EVENT_AB, null);
-        Assert.assertEquals(processor.getStateMachine().getCurrentState(),
-                STATE_B);
+        sm = StateMachines.newNonReentrant(this);
+        sm.processEvent(EVENT_AB, null);
+        Assert.assertEquals(sm.getCurrentState(), STATE_B);
     }
-    
-    @Test( expectedExceptions = EventNotDefinedException.class )
+
+    @Test(expectedExceptions = EventNotDefinedException.class)
     public void testProcessingNotDefinedEvent() throws StateMachineException {
-    	AnnotatedControllerFactory f = new AnnotatedControllerFactory();
-        processor = f
-                .createNonReentrantStateMachine(this);
-        processor.processEvent("NON_EXISTENT", null);
+        sm = StateMachines.newNonReentrant(this);
+        sm.processEvent("NON_EXISTENT", null);
     }
 }

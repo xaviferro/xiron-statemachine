@@ -21,8 +21,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import shisha.statemachine.EnterStateController;
 import shisha.statemachine.EventInfo;
-import shisha.statemachine.StateMachineDefinition;
+import shisha.statemachine.ExitStateController;
+import shisha.statemachine.StateMachineDefinitionImpl;
 import shisha.statemachine.StateMachineImpl;
 import shisha.statemachine.StateMachineStrategy;
 import shisha.statemachine.TransitionController;
@@ -57,11 +59,10 @@ public class ReentrantStrategy implements StateMachineStrategy {
     }
     
     public void processEvent(StateMachineImpl statemachine,
-                             String event, Object object,
-                             TransitionController controller)
+                             String event, Object object)
             throws ReentrantTransitionNotAllowed, StateMachineDefinitionException
     {
-        StateMachineDefinition stateMachineDefinition = statemachine.getDefinition();
+        StateMachineDefinitionImpl stateMachineDefinition = (StateMachineDefinitionImpl) statemachine.getDefinition();
         if (!stateMachineDefinition.isEvent(event))
             throw new EventNotDefinedException("Event " + event + " not defined");
         
@@ -82,22 +83,33 @@ public class ReentrantStrategy implements StateMachineStrategy {
             String target = stateMachineDefinition.getTargetState(source, event);
             TransitionInfo tEvent = new TransitionInfo(source, event, target, object);
             
-            if (controller.exitStatePhase(tEvent)) {
-                controller.transitionPhase(tEvent);
-                statemachine.setCurrentState(target);
-                EventInfo result = controller.enterStatePhase(tEvent);
-                if (result != null) {
-                    l.debug("#processEvent: Redirecting forced by controller to event " + result.getEvent());
-                    inTransition = false; 
-                    
-                    this.processEvent(statemachine, 
-                                      result.getEvent(), 
-                                      result.getObject(), 
-                                      controller);
+            ExitStateController exitController = stateMachineDefinition.getExitStateController(source);
+            EnterStateController enterController = stateMachineDefinition.getEnterStateController(target);
+            TransitionController transitionController = stateMachineDefinition.getTransitionController(source, event);
+            
+            if (exitController != null) {
+                if (!exitController.execute(tEvent)) {
+                    l.debug("The controller cancelled the event propagation");
+                    return;
                 }
-            } else {
-                if (l.isDebugEnabled())
-                    l.debug("#processEvent: transition cancelled on exit state phase");
+            } 
+            
+            if (transitionController != null) {
+                transitionController.execute(tEvent);
+            }
+            statemachine.setCurrentState(target);
+            EventInfo result = null;
+            if (enterController != null) {
+                result = enterController.execute(tEvent);
+            }
+            
+            if (result != null) {
+                l.debug("#processEvent: Redirecting forced by controller to event " + result.getEvent());
+                inTransition = false; 
+                
+                this.processEvent(statemachine, 
+                                  result.getEvent(), 
+                                  result.getObject());
             }
         } catch (InterruptedException ie) {
             l.warn("#processEvent: interrupted exception might not happen");

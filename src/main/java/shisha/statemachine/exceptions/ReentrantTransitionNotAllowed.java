@@ -15,7 +15,7 @@
  */   
 package shisha.statemachine.exceptions;
 
-public class ReentrantTransitionNotAllowed extends StateMachineException {
+public class ReentrantTransitionNotAllowed extends StateMachineExecutionException {
     private static final long serialVersionUID = 1L;
     public ReentrantTransitionNotAllowed(String msg) {
         super(msg);

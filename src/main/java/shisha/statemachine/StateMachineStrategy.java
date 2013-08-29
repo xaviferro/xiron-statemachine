@@ -38,15 +38,12 @@ public interface StateMachineStrategy {
      * @param object if we need an object to be passed to the controller with
      *        context meaning.
      * 
-     * @param controller controls all the phases of executing a transaction
-     * 
      * @throws EventNotDefinedException
      * @throws ReentrantTransitionNotAllowed
      * @throws TransitionNotDefinedException
      */
     public void processEvent(StateMachineImpl statemachine,
                              String event,
-                             Object object,
-                             TransitionController controller)
+                             Object object)
         throws ReentrantTransitionNotAllowed, StateMachineDefinitionException;
 }

@@ -15,11 +15,13 @@
  */   
 package shisha.pattern.statemachine.annotated.util;
 
+import shisha.statemachine.annotations.AStateMachine;
 import shisha.statemachine.annotations.State;
 
 /**
  * The state is not final
  */
+@AStateMachine
 public class IllegalStateAnnotation_01  {
     @State(isStart=true) public static String STATE_A = "STATE_A";
 }

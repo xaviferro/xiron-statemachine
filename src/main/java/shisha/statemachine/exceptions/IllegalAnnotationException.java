@@ -15,7 +15,7 @@
  */   
 package shisha.statemachine.exceptions;
 
-public class IllegalAnnotationException extends StateMachineException {
+public class IllegalAnnotationException extends StateMachineDefinitionException {
     private static final long serialVersionUID = 1L;
     public IllegalAnnotationException(String msg) {
         super(msg);

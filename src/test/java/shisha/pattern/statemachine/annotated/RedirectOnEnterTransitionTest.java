@@ -15,22 +15,20 @@
  */   
 package shisha.pattern.statemachine.annotated;
 
-import junit.framework.Assert;
-
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import shisha.pattern.statemachine.annotated.util.DumbRedirectController;
-import shisha.statemachine.annotations.AnnotatedControllerFactory;
-import shisha.statemachine.annotations.AnnotatedControllerProcessor;
+import shisha.statemachine.StateMachine;
+import shisha.statemachine.StateMachines;
 
 public class RedirectOnEnterTransitionTest {
     @Test
 	public void testRedirect() throws Exception {
-        AnnotatedControllerFactory f = new AnnotatedControllerFactory();
-        AnnotatedControllerProcessor processor = f.createNonReentrantStateMachine(new DumbRedirectController());
-        processor.processEvent(DumbRedirectController.EVENT_AA, null);
-        shisha.statemachine.StateMachine sm = processor.getStateMachine();
+        StateMachine sm = StateMachines.newNonReentrant(new DumbRedirectController());
+        System.out.println(sm.getDefinition());
+        sm.processEvent(DumbRedirectController.EVENT_AB, null);
         String endState = sm.getCurrentState();
-        Assert.assertEquals(endState, DumbRedirectController.STATE_B);
+        Assert.assertEquals(endState, DumbRedirectController.STATE_C);
     }
 }

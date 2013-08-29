@@ -31,14 +31,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Transition {
     /**
-     * One can choose between the exit phase, transition phase or enter one.
-     * Check the @link{StateMachineController} for further information.
-     * 
-     * By default, its value is @link{TransitionPhases.PHASE_TRANSITION}.
-     */
-    TransitionPhases phase() default TransitionPhases.PHASE_TRANSITION;
-    
-    /**
      * The state which we came from
      */
     String source();

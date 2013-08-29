@@ -15,12 +15,14 @@
  */   
 package shisha.pattern.statemachine.annotated.util;
 
+import shisha.statemachine.annotations.AStateMachine;
 import shisha.statemachine.annotations.Event;
 
 
 /**
  * Event is not final
  */
+@AStateMachine
 public class IllegalEventAnnotation_01 {
     @Event public static String EVENT_AB = "EVENT_AB";
 }

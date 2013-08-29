@@ -15,6 +15,7 @@
  */   
 package shisha.pattern.statemachine.annotated.util;
 
+import shisha.statemachine.annotations.AStateMachine;
 import shisha.statemachine.annotations.Event;
 import shisha.statemachine.annotations.State;
 import shisha.statemachine.annotations.Transition;
@@ -22,6 +23,7 @@ import shisha.statemachine.annotations.Transition;
 /**
  * Wrong parameter names is transition
  */
+@AStateMachine
 public class IllegalTransitionAnnotation_01 {
     @State(isStart=true) public static final String STATE_A = "STATE_A";
     @State public static final String STATE_B = "STATE_B";

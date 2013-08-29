@@ -16,9 +16,6 @@
 package shisha.statemachine;
 
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,14 +32,12 @@ public abstract class StateMachineImpl implements StateMachine {
     protected String currentState;
     protected StateMachineDefinition definition;
     protected StateMachineStrategy strategy;
-    protected List<StateMachineController> controllers;
 
     protected StateMachineImpl(StateMachineDefinition definition,
-            StateMachineStrategy strategy, StateMachineController... controllers) {
+            StateMachineStrategy strategy) {
         this.definition = definition;
         this.strategy = strategy;
         this.currentState = definition.getStartState();
-        this.controllers = Arrays.asList(controllers);
     }
 
     /**
@@ -52,12 +47,11 @@ public abstract class StateMachineImpl implements StateMachine {
      * 
      * <p>This method delegates completely on the strategy.
      */
-    public void processEvent(String event, Object object,
-                             TransitionController controller)
+    public void processEvent(String event, Object object)
             throws ReentrantTransitionNotAllowed,
                    StateMachineDefinitionException 
     {
-        strategy.processEvent(this, event, object, controller);
+        strategy.processEvent(this, event, object);
     }
 
     public StateMachineDefinition getDefinition() {

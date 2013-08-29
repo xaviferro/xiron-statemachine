@@ -15,8 +15,6 @@
  */
 package shisha.statemachine;
 
-import java.util.List;
-
 import shisha.statemachine.exceptions.ReentrantTransitionNotAllowed;
 import shisha.statemachine.exceptions.StateMachineDefinitionException;
 
@@ -26,37 +24,20 @@ import shisha.statemachine.exceptions.StateMachineDefinitionException;
  * is defined by {@link StateMachineStrategy}.
  */
 public interface StateMachine {
-	/**
-	 * Modifies the current state. A developer should NEVER modify its value
-	 * unless he/she is very sure what he is doing
-	 */
-	//public void setCurrentState(String state);
+    /**
+     * Returns the current state of the state machine
+     */
+    public String getCurrentState();
 
-	/**
-	 * Returns the current state of the state machine
-	 */
-	public String getCurrentState();
+    /**
+     * Returns the state machine definition
+     */
+    public StateMachineDefinition getDefinition();
 
-	/**
-	 * Returns the state machine definition
-	 */
-	public StateMachineDefinition getDefinition();
-
-	public List<StateMachineController> getControllers();
-	
-	//public void setControllers(List<StateMachineController> controllers);
-	
-	/**
-	 * Returns the strategy of the state machine
-	 */
-	//public StateMachineStrategy getStrategy();
-
-	/**
-	 * Consumes an event following the strategy defined by
-	 * {@link #getStrategy()}
-	 */
-	public void processEvent(String event, Object object,
-			TransitionController controller)
-			throws ReentrantTransitionNotAllowed,
-			StateMachineDefinitionException;
+    /**
+     * Consumes an event following the strategy defined by
+     * {@link #getStrategy()}
+     */
+    public void processEvent(String event, Object object) throws ReentrantTransitionNotAllowed,
+            StateMachineDefinitionException;
 }
