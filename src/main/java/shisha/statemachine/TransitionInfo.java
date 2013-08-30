@@ -49,11 +49,4 @@ public class TransitionInfo extends EventInfo {
     public HashMap<String,Object> getTransitionContext() {
         return this.transitionContext;
     }
-    
-    @Override 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("source: ").append(source).append(" - event: ").append(getEvent()).append(" - target: ").append(target);
-        return sb.toString();
-    }
 }

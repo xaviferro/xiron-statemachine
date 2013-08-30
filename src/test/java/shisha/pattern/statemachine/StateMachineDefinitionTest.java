@@ -15,6 +15,7 @@
  */
 package shisha.pattern.statemachine;
 
+import static junit.framework.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -91,10 +92,20 @@ public class StateMachineDefinitionTest {
     public void testAddingAStateThatAlreadyExists() throws StateMachineDefinitionException {
         definition.defineState(STATE_A);
     }
+    
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testAddNullState() throws StateMachineDefinitionException {
+        definition.defineState(null);
+    }
 
     @Test(expectedExceptions = EventAlreadyExistsException.class)
     public void testAddingAnEventThatAlreadyExists() throws StateMachineDefinitionException {
         definition.defineEvent(EVENT_AB);
+    }
+    
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testAddNullEvent() throws StateMachineDefinitionException {
+        definition.defineEvent(null);
     }
 
     @Test
@@ -126,6 +137,20 @@ public class StateMachineDefinitionTest {
         assertEquals(3, definition.getStates().size());
     }
 
+    @Test
+    public void testIsStartStateWithNullValue() {
+        assertFalse(definition.isStartState(null));
+    }
+    
+    @Test void testIsFinalStateWithNullValue() {
+        assertFalse(definition.isFinalState(null));
+    }
+    
+    @Test
+    public void testCanAddReflexiveTransitionToFinalState() throws StateMachineDefinitionException {
+        definition.defineTransition(STATE_C, EVENT_CC, STATE_C, transitionController);
+    }
+    
     @Test(expectedExceptions = StateNotDefinedException.class)
     public void testGetTargetStateForNullState() throws StateNotDefinedException, TransitionNotDefinedException {
         definition.getTargetState(null, EVENT_AB);

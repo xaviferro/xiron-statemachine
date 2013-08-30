@@ -38,6 +38,9 @@ import shisha.statemachine.exceptions.StateMachineDefinitionException;
 import shisha.statemachine.exceptions.StateNotDefinedException;
 import shisha.statemachine.exceptions.TransitionNotDefinedException;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 /**
  * Contains all the data for a state machine. It is not thread-safe
  */
@@ -50,8 +53,8 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
     private HashSet<String> events;
 
     public StateMachineDefinitionImpl() {
-        this.states = new HashMap<String, State>();
-        this.events = new HashSet<String>();
+        this.states = Maps.newHashMap();
+        this.events = Sets.newHashSet();
     }
 
     public boolean isEvent(String event) {
@@ -175,7 +178,7 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
             }
         });
     }
-    
+
     public void defineTransition(String source, String event, String target, TransitionController controller)
             throws StateMachineDefinitionException {
         State sourceState = checkStateExists(source);
@@ -205,7 +208,7 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
             }
         });
     }
-    
+
     public void defineExitState(String state, ExitStateController controller) throws StateMachineDefinitionException {
         State internalState = checkStateExists(state);
         internalState.setExitStateController(controller);
@@ -229,7 +232,7 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
             }
         });
     }
-    
+
     public void defineEnterState(String state, EnterStateController controller) throws StateMachineDefinitionException {
         State internalState = checkStateExists(state);
         internalState.setEnterStateController(controller);
@@ -302,6 +305,27 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
         return result;
     }
 
+    private void printTransitionsForState(State state, StringBuilder sb) {
+        String NEWLINE = "\n";
+        sb.append("<Transitions>").append(NEWLINE);
+
+        if (state.getExitStateController() != null)
+            sb.append("<ExitState state=\"").append(state.getName()).append("\" />").append(NEWLINE);
+
+        HashMap<String, TransitionTarget> txs = state.getTransitions();
+        for (String event : txs.keySet()) {
+            TransitionTarget target = txs.get(event);
+            sb.append("<Transition ").append("source=\"").append(state.getName()).append("\" ").append("event=\"")
+                    .append(event).append("\" ").append("target=\"").append(target.getState()).append("\"")
+                    .append(" />").append(NEWLINE);
+        }
+
+        if (state.getEnterStateController() != null)
+            sb.append("<EnterState state=\"").append(state.getName()).append("\" />");
+
+        sb.append("</Transitions>").append(NEWLINE);
+    }
+
     /**
      * Returns the state machine definition in a XML format. This is not a cheap
      * operation.
@@ -323,6 +347,7 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
             } else {
                 sb.append("<State>").append(state).append("</State>").append(NEWLINE);
             }
+            printTransitionsForState(state, sb);
         }
         sb.append("</States>").append(NEWLINE);
 
@@ -332,21 +357,24 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
         }
         sb.append("</Events>").append(NEWLINE);
 
-        sb.append("<Transitions>").append(NEWLINE);
-        for (State state : states.values()) {
-            HashMap<String, TransitionTarget> txs = state.getTransitions();
-            for (String event : txs.keySet()) {
-                TransitionTarget target = txs.get(event);
-                sb.append("<Transition ").append("source=\"").append(state.getName()).append("\" ").append("event=\"")
-                        .append(event).append("\" ").append("target=\"").append(target.getState()).append("\"")
-                        .append(" />").append(NEWLINE);
-            }
-            if (state.getEnterStateController() != null)
-                sb.append("<EnterState state=\"").append(state.getName()).append("\" />");
-            if (state.getExitStateController() != null)
-                sb.append("<ExitState state=\"").append(state.getName()).append("\" />");
-        }
-        sb.append("</Transitions>").append(NEWLINE);
+        /*
+         * sb.append("<Transitions>").append(NEWLINE); for (State state :
+         * states.values()) { HashMap<String, TransitionTarget> txs =
+         * state.getTransitions(); for (String event : txs.keySet()) {
+         * TransitionTarget target = txs.get(event);
+         * sb.append("<Transition ").append
+         * ("source=\"").append(state.getName()).
+         * append("\" ").append("event=\"")
+         * .append(event).append("\" ").append("target=\""
+         * ).append(target.getState()).append("\"")
+         * .append(" />").append(NEWLINE); } if (state.getEnterStateController()
+         * != null)
+         * sb.append("<EnterState state=\"").append(state.getName()).append
+         * ("\" />"); if (state.getExitStateController() != null)
+         * sb.append("<ExitState state=\""
+         * ).append(state.getName()).append("\" />"); }
+         * sb.append("</Transitions>").append(NEWLINE);
+         */
 
         sb.append("</StateMachineDefinition>");
         return sb.toString();
@@ -429,7 +457,7 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
             TransitionTarget info = this.transitions.get(event);
             if (info != null)
                 controller = info.getTransitionController();
-            
+
             return controller;
         }
 

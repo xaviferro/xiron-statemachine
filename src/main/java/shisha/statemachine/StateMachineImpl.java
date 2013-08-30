@@ -33,7 +33,7 @@ public abstract class StateMachineImpl implements StateMachine {
     protected StateMachineDefinition definition;
     protected StateMachineStrategy strategy;
 
-    protected StateMachineImpl(StateMachineDefinition definition,
+    public StateMachineImpl(StateMachineDefinition definition,
             StateMachineStrategy strategy) {
         this.definition = definition;
         this.strategy = strategy;

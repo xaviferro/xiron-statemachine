@@ -15,6 +15,7 @@ import shisha.statemachine.annotations.State;
 import shisha.statemachine.annotations.Transition;
 import shisha.statemachine.annotations.Transitions;
 import shisha.statemachine.exceptions.EventAlreadyExistsException;
+import shisha.statemachine.exceptions.IllegalControllerAnnotationException;
 import shisha.statemachine.exceptions.IllegalEventAnnotationException;
 import shisha.statemachine.exceptions.IllegalStateAnnotationException;
 import shisha.statemachine.exceptions.IllegalTransitionAnnotationException;
@@ -37,7 +38,7 @@ public class StateMachines {
             throws StateMachineDefinitionException {
         Class<?> clazz = instance.getClass();
         if (!clazz.isAnnotationPresent(shisha.statemachine.annotations.AStateMachine.class)) {
-            throw new StateMachineDefinitionException(
+            throw new IllegalControllerAnnotationException(
                     "All state machines must be annotated with the @AStateMachine annotation");
         }
     }
@@ -105,7 +106,7 @@ public class StateMachines {
         Class<?> resultType = method.getReturnType();
         if (resultType == null || !resultType.equals(EventInfo.class))
             throw new IllegalTransitionAnnotationException("Transition for method " + method.getName()
-                    + " is not well defined. Enter phase must return a PhaseEnterResult");
+                    + " is not well defined. Enter phase must return a EventInfo");
 
         definition.defineEnterState(ann, method, instance);
     }
