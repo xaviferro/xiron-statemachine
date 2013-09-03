@@ -1,5 +1,5 @@
 /*  
- * Copyright 2012 xavi.ferro
+ * Copyright 2012-2013 xavi.ferro
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,13 @@ package shisha.statemachine;
 import java.util.List;
 import java.util.Set;
 
+import shisha.statemachine.annotations.EnterState;
 import shisha.statemachine.exceptions.StateNotDefinedException;
 import shisha.statemachine.exceptions.TransitionNotDefinedException;
 
 /**
- * Allows defining a set of states that are connected to each other. State
- * machines process events that might fire transitions between states.
+ * Allows defining the state machine. Read the README file for further
+ * explanations about the finite state machine.
  * 
  * <p>
  * There are many reasons why this pattern is very useful. Keeping the right
@@ -36,31 +37,27 @@ import shisha.statemachine.exceptions.TransitionNotDefinedException;
  * <li>We are forced to declare explicitly states and events. We could try to
  * use a less explicit model, but we want to avoid typing errors and maintenance
  * ones.</li>
- * <li>We are forced to declare transitions. A transition is a 'source
+ * 
+ * <li>We are forced to declare transitions. A transition is formed by 'source
  * state','target state' and 'event' tuple. The event provokes a transition to
  * happen from a source state to a target state.</li>
+ * 
  * <li>Each transition is executed in 3 steps that allows us to keep a good
- * control of the actions to perform in each step. Check
- * {@link TransitionController} for further details.</li>
- * <li>State machines are designed to protect critical sections in a complex
- * event driven environment. Only one thread CAN execute a transition at a time.
- * Any manipulation of sensitive information SHOULD be done during a transition.
- * </li>
- * <li>So, during a transition the lock of the object is acquired and it won't
- * be released until the transition finishes. Be aware of that because it might
- * cause deadlocks if you are not a good programmer :-)</li>
- * <li>Using the lock guarantees no other thread will be in the critical
- * section. But, what about the same thread? It might be possible to process an
- * event while processing another event. We want to avoid that because it might
- * cause inconsistencies. So, if we define the flag
- * {@link #allowsReentrantTransitions} to false we are forcing the state machine
- * to prevent that situation.</li>
- * <li>If {@link #allowsReentrantTransition} is set to false -the only one
- * supported now-, we are forcing the state machine to guarantee that one and
- * only thread is allowed to perform transitions at a time. The same thread is
- * not allowed to perform more transitions during the transition. You might use
- * the {@link TransitionController#phaseEnterState} mechanism for forwarding</li>
- * </ul>
+ * control of the actions to perform in each step: exiting the state, the
+ * transition itself and entering a state. </li>
+ * 
+ * <li>Once defining any kind of transition phase, we need to define the controller
+ * that will take responsibility for executing the required code. Check {@link EnterStateController},
+ * {@link TransitionController} and {@link ExitStateController} for further details</li>
+ * 
+ * <li>We keep the definition of the state machine separated from the execution,
+ *     which happens in the {@link StateMachine} object.</li>
+ *     
+ * <li>You can create a state machine from a {@link StateMachineDefinition} invoking
+ *     {@link shisha.statemachine.StateMachines#newReentrant(StateMachineDefinition)} or
+ *     {@link shisha.statemachine.StateMachines#newNonReentrant(StateMachineDefinition)}.
+ *     Check {@link shisha.statemachine.StateMachineStrategy} to understand the difference
+ *     between both.</li>
  * 
  * <p>
  * Invariant.
@@ -69,9 +66,8 @@ import shisha.statemachine.exceptions.TransitionNotDefinedException;
  * <li>Transitions from other threads with be blocked by the state machine lock.
  * </li>
  * <li>Transitions from the same thread will throw an exception as we need to
- * avoid recurrent transitions that might end up in an error state. For example,
- * we want to prevent transitions during the exit phase and consequent
- * notifications out of order.</li>
+ * avoid recurrent transitions that might end up in an error state unless they come
+ * from the {@link EnterState} phase</li>
  * </ul>
  */
 public interface StateMachineDefinition {

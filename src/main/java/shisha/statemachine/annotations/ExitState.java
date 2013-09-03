@@ -22,6 +22,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+/**
+ * Defines a transition enter state phase. Methods annotated with it
+ * might have the same contract as the {@link ExitStateController}
+ */
 public @interface ExitState { 
     public String value();
 }

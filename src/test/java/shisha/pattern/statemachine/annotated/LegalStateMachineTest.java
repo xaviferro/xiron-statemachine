@@ -26,6 +26,7 @@ import shisha.statemachine.TransitionInfo;
 import shisha.statemachine.annotations.AStateMachine;
 import shisha.statemachine.annotations.EnterState;
 import shisha.statemachine.annotations.Event;
+import shisha.statemachine.annotations.ExitState;
 import shisha.statemachine.annotations.State;
 import shisha.statemachine.annotations.Transition;
 import shisha.statemachine.annotations.Transitions;
@@ -47,10 +48,19 @@ public class LegalStateMachineTest {
     @Transitions({@Transition(source=STATE_A, target=STATE_B, event=EVENT_AB),
                   @Transition(source=STATE_B, target=STATE_COND, event=EVENT_BC),
                   @Transition(source=STATE_COND, target=STATE_D, event=EVENT_CD)})
-    public void noop(TransitionInfo tEvent) {}
+    public void noop(TransitionInfo info) {
+        System.out.println("#tx: " + info);
+    }
+    
+    @ExitState(STATE_A)
+    public Boolean exitA(TransitionInfo info) {
+        System.out.println("#exit: " + info);
+        return true;
+    }
     
     @EnterState(STATE_COND)
-    public EventInfo transitionBC(TransitionInfo tEvent) {
+    public EventInfo transitionBC(TransitionInfo info) {
+        System.out.println("#enter: " + info);
         return new EventInfo(EVENT_CD, null);
     }
     

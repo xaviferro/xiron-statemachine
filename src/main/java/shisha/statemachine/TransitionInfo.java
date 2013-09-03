@@ -17,6 +17,8 @@ package shisha.statemachine;
 
 import java.util.HashMap;
 
+import com.google.common.collect.Maps;
+
 /**
  * Contains the transition's information. Besides the basic information (source,
  * target and event), we provide the object passed when processing the event and
@@ -35,7 +37,7 @@ public class TransitionInfo extends EventInfo {
         
         this.source = source;
         this.target = target;
-        this.transitionContext = new HashMap<String, Object> ();
+        this.transitionContext = Maps.newHashMap();
     }
     
     public String getSource() {
@@ -48,5 +50,10 @@ public class TransitionInfo extends EventInfo {
     
     public HashMap<String,Object> getTransitionContext() {
         return this.transitionContext;
+    }
+    
+    public String toString() {
+        return "[" + source + " + " + event + " -> " + target + "]";
+        
     }
 }

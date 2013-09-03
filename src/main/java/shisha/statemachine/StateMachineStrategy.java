@@ -18,6 +18,7 @@ package shisha.statemachine;
 import shisha.statemachine.exceptions.EventNotDefinedException;
 import shisha.statemachine.exceptions.ReentrantTransitionNotAllowed;
 import shisha.statemachine.exceptions.StateMachineDefinitionException;
+import shisha.statemachine.exceptions.StateMachineExecutionException;
 import shisha.statemachine.exceptions.TransitionNotDefinedException;
 
 public interface StateMachineStrategy {
@@ -26,9 +27,9 @@ public interface StateMachineStrategy {
      * transition has been defined for this state machine.
      * 
      * If the transition has been defined, this method will perform:
-     * 1 - execute the transitionExitPhase
-     * 2 - execute the transition
-     * 3 - execute the transitionEnterPhase
+     * 1 - execute the exit state phase
+     * 2 - execute the transition phase
+     * 3 - execute the enter state phase
      * 
      * Everything will happen with the state machine lock acquired, so careful with the
      * deadlocks.
@@ -45,5 +46,5 @@ public interface StateMachineStrategy {
     public void processEvent(StateMachineImpl statemachine,
                              String event,
                              Object object)
-        throws ReentrantTransitionNotAllowed, StateMachineDefinitionException;
+        throws StateMachineExecutionException, StateMachineDefinitionException;
 }

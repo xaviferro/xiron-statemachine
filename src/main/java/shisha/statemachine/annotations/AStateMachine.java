@@ -22,5 +22,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+/**
+ * All state machine classes must be annotated with it. Just to have some discipline about them :-)
+ */
 public @interface AStateMachine {
 }

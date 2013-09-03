@@ -19,14 +19,14 @@ package shisha.statemachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import shisha.statemachine.exceptions.ReentrantTransitionNotAllowed;
 import shisha.statemachine.exceptions.StateMachineDefinitionException;
+import shisha.statemachine.exceptions.StateMachineExecutionException;
 
 /**
  * Basic state machine implementation. Implements a non-reentrant transition
  * strategy
  */
-public abstract class StateMachineImpl implements StateMachine {
+public class StateMachineImpl implements StateMachine {
     protected Logger l = LoggerFactory.getLogger(getClass());
 
     protected String currentState;
@@ -48,7 +48,7 @@ public abstract class StateMachineImpl implements StateMachine {
      * <p>This method delegates completely on the strategy.
      */
     public void processEvent(String event, Object object)
-            throws ReentrantTransitionNotAllowed,
+            throws StateMachineExecutionException,
                    StateMachineDefinitionException 
     {
         strategy.processEvent(this, event, object);

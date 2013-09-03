@@ -1,0 +1,117 @@
+A state machine is a well-known way of defining and managing complex instance state
+for a finite state machine in a high concurrent event-driven environment. 
+The state changes quickly and we need to avoid repetitive manual work for managing
+the state, which ends up being quite error prone.
+
+The goal of this library is to provide an easy and simple implementation that covers 
+most of the cases in a concurrent system. On top of that, the library provides
+some nice decoration annotations that allow developers to create state machines
+easily.
+
+So, what is a state machine? You might find quite some nice explanations in wikipedia
+about Finite State Machine. In my words, a state machine is defined as a set of states, 
+events that might be triggered and transitions between states, which happen given an 
+specified event. A transition is a tuple of state-event-state. Each tuple defines an 
+allowed transition between the source state and target state based on a triggered event.
+Transitions that have not been declared will throw an exception, as they are not
+allowed at all.
+
+In order to provide fully control on the execution of the transition, each transition
+is divided in 3 phases:
+
+- First phase, when exiting the source state. It's the only phase that allows cancelling
+  the transaction. See ExitStateController.
+  
+- Second phase, the transition itself. It's the phase that developers are going to use
+  the most. Take a look at TransitionController.
+  
+- And last but not least, when entering the target state. In this phase we might want
+  to process a new event without releasing the lock. This is very useful for intermediate
+  conditional states that evaluate a condition and take a decision. See
+  EnterStateController.
+
+Some other properties of the state machine are:
+- A state machine has one starting state.
+- A state machine has multiple intermediate states.
+- A state machine has multiple finish states.
+- We cannot define transitions sourced in a final state unless they are reflexive ones.
+- When created, the state machine state is the starting state.
+- Transitions are executed atomically.
+
+The basic model of the state machine, separates the definition -StateMachiheDefinition-,
+from the execution state -StateMachine- from the execution strategy -StateMachineStrategy-.
+
+You can see in the model that I have separated the definition of the state machine 
+(see StateMachineDefinition for further details) from the execution (see StateMachine)
+
+Apart from the manual state machine definition, the library enriches the model with
+some annotation utilities. For example, the following class would define a state machine:
+
+@AStateMachine
+public class LegalStateMachineTest {
+    @State(isStart=true) public static final String STATE_A = "STATE_A";
+    @State public static final String STATE_B = "STATE_B";
+    @State public static final String STATE_COND = "STATE_COND";
+    @State public static final String STATE_D = "STATE_D";
+    
+    @Event public static final String EVENT_AB = "EVENT_AB";
+    @Event public static final String EVENT_BB = "EVENT_BB";
+    @Event public static final String EVENT_BC = "EVENT_BC";
+    @Event public static final String EVENT_CD = "EVENT_CD";
+    
+    @Transitions({@Transition(source=STATE_A, target=STATE_B, event=EVENT_AB),
+                  @Transition(source=STATE_B, target=STATE_COND, event=EVENT_BC),
+                  @Transition(source=STATE_COND, target=STATE_D, event=EVENT_CD)})
+    public void noop(TransitionInfo info) {
+        System.out.println("#tx: " + info);
+    }
+    
+    @ExitState(STATE_A)
+    public Boolean exitA(TransitionInfo info) {
+        System.out.println("#exit: " + info);
+        return true;
+    }
+    
+    @EnterState(STATE_COND)
+    public EventInfo transitionBC(TransitionInfo info) {
+        System.out.println("#enter: " + info);
+        return new EventInfo(EVENT_CD, null);
+    }
+    
+    @Test
+    public void test() throws StateMachineException {
+        StateMachine sm = StateMachines.newNonReentrant(this);
+        sm.processEvent(EVENT_AB, null);
+        sm.processEvent(EVENT_BC, null);
+        
+        Assert.assertEquals(sm.getCurrentState(), STATE_D);
+    }
+}
+
+If we execute the previous test, we would get the following output:
+#exit: [STATE_A + EVENT_AB -> STATE_B]
+#tx: [STATE_A + EVENT_AB -> STATE_B]
+#tx: [STATE_B + EVENT_BC -> STATE_COND]
+#enter: [STATE_B + EVENT_BC -> STATE_COND]
+#tx: [STATE_COND + EVENT_CD -> STATE_D]
+
+In order to instantiate this class we need to invoke StateMachines.newReentrant(the_object),
+that will return a state machine with:
+- 4 states: STATE_A, STATE_B, STATE_COND and STATE_D
+- 4 events: EVENT_AB, EVENT_BB, EVENT_BC and EVENT_CD
+- 1 enter state definition. When entering the state STATE_COND, we decide to trigger a new
+  event before releasing the lock
+- 3 transitions: 
+        STATE_A + EVENT_AB -> STATE_B 
+        STATE_B + EVENT_BC -> STATE_COND
+        STATE_COND + EVENT_CD -> STATE_D
+
+Hopefully, the example is clear enough.
+
+The last point to mention is about choosing the right strategy when creating a state machine.
+There are only two at the moment:
+- Reentrant. Means that we can trigger an event when executing a transaction from that thread
+  (outside the allowed step during the enter state). Be careful on that.
+- Non reentrant. Means that the state machine won't allow transitions during a transition.
+  This enforces to think more about the concurrency model and it's, normally, a safer approach.
+  

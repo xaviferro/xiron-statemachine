@@ -20,15 +20,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Defines a transition in an annotated state machine. The annotated
- * method will be executed within the phase defined by {@link #phase()}.
- * <p>
- * The {@link AnnotatedControllerProcessor} looks for all methods for
- * methods that are marked with it.  
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+/**
+ * Defines a transition enter state phase. Methods annotated with it
+ * might have the same contract as the {@link TransitionController}
+ */
 public @interface Transition {
     /**
      * The state which we came from

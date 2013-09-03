@@ -42,7 +42,35 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * Contains all the data for a state machine. It is not thread-safe
+ * Responsible for defining the set of states, events and transitions or a state
+ * machine. A transition is a tuple of source state - event - target state,
+ * where the tuple X-E-Y would mean that, if the current state is X and we get
+ * and event E, next current state is going to be Y unless during the transition
+ * itself we decide to cancel the transition.
+ * 
+ * <p>
+ * Some constraints of the model:
+ * <ul>
+ * <li>A state machine must have an initial state. If not, the
+ * {@link StateMachine} will throw an exception when trying to instantiate it.</li>
+ * <li>A state machine might have multiple finish states. Finish states have
+ * additional checkings that do not allow creating transitions to other states.
+ * Only reflexive transitions are allowed</li>
+ * <li>Every transition is splitted into 3 phases: exiting the state, the
+ * transition itself and entering state.</li>
+ * <li>Most of the times, we need only to implement the transition phase only
+ * {@link TransitionController}.
+ * </ul>
+ * the state it is an allowed transition to be in state X, procif we are in
+ * transition X and receive event E we will try to execute transition X-E-Y for
+ * getting to target state it is we can If X-E-YIt means that from a source
+ * event Xmeans that
+ * 
+ * Each transition has 3 different phases
+ * 
+ * <p>
+ * A state machine has an initial state. Contains all the data for a state
+ * machine. It is not thread-safe
  */
 public class StateMachineDefinitionImpl implements StateMachineDefinition {
     private static Logger l = LoggerFactory.getLogger(StateMachineDefinitionImpl.class);

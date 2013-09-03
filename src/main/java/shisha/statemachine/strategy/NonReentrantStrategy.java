@@ -15,7 +15,6 @@
  */ 
 package shisha.statemachine.strategy;
 
-
 public class NonReentrantStrategy extends ReentrantStrategy {
     public NonReentrantStrategy() {
         super();

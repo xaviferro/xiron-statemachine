@@ -16,25 +16,8 @@
 package shisha.statemachine;
 
 /**
- * Each transition is executed in three phases. The phase most widely used is the
- * {@link #phaseTransition} one. So, if you don't have any special need, use that one.
- * 
- * These phases are executed sequentially:
- * <ul>
- * <li>First, the {@link #exitStatePhase} is invoked. It's the only phase that allows
- * 	   cancelling the transition. If so, none of the following phases are going to
- *     be executed.</li>
- *     
- * <li>Second, the {@link #transitionPhase} is invoked. It should contain the main work to
- *     be performed during a transition</li>
- *     
- * <li>And finally, the {@link #enterStatePhase} is invoked. It's the phase that allows
- * 	   us to return a forward. The method returns a {@link EventInfo} object that might.
- *     If not null, the event that is inside the object is going to be executed
- *     by the state machine without releasing the lock. This is very useful in certain
- *     circumstances (specially ghost-like condition states that we need to check a lot of
- *     conditions for taking a decision about the next actions to happen)</li>
- * </ul>
+ * It corresponds to the transition phase itself. It's where most of the work shoul be done,
+ * unless you have very specific needs.
  */
 public interface TransitionController {
     void execute(TransitionInfo event);

@@ -16,19 +16,19 @@
 package shisha.statemachine;
 
 /**
- * <p>Con<tains all information required for processing an event in a state machine. An event
+ * <p>Contains all information required for processing an event in a state machine. An event
  * is defined by an event identifier and an object -it might be null- that will be useful
  * when processing the transition (some kind of state).
  * 
- * <p>A non null object is returned during the {@link TransitionController#enterStatePhase(TransitionEvent event)}
+ * <p>A non null object is returned during the {@link EnterStateController#execute(TransitionEvent event)}
  * if we want the state machine to process a new event before releasing the lock.
  * 
  * <p>This  is quite useful for some conditional states that might evaluate in runtime next event to be
  * consumed.
  */
 public class EventInfo {
-    private String event;
-    private Object object;
+    protected String event;
+    protected Object object;
     
     public EventInfo(String event, Object object) {
         this.event = event;

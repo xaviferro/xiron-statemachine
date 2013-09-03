@@ -1,3 +1,18 @@
+/*  
+ * Copyright 2012-2013 xavi.ferro
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package shisha.statemachine;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -8,6 +23,7 @@ import java.lang.reflect.Modifier;
 
 import org.slf4j.Logger;
 
+import shisha.statemachine.annotations.AStateMachine;
 import shisha.statemachine.annotations.EnterState;
 import shisha.statemachine.annotations.Event;
 import shisha.statemachine.annotations.ExitState;
@@ -20,18 +36,33 @@ import shisha.statemachine.exceptions.IllegalEventAnnotationException;
 import shisha.statemachine.exceptions.IllegalStateAnnotationException;
 import shisha.statemachine.exceptions.IllegalTransitionAnnotationException;
 import shisha.statemachine.exceptions.StateMachineDefinitionException;
-import shisha.statemachine.impl.NonReentrantStateMachine;
-import shisha.statemachine.impl.ReentrantStateMachine;
+import shisha.statemachine.strategy.NonReentrantStrategy;
+import shisha.statemachine.strategy.ReentrantStrategy;
 
+/**
+ * Helper class for creating state machines from a state machine definition or
+ * from an annotated class.
+ * 
+ * <p>
+ * The annotated class must be annotated with {@link AStateMachine}
+ */
 public class StateMachines {
     protected static Logger l = getLogger(StateMachines.class);
 
+    public static StateMachine newReentrant(StateMachineDefinition definition) throws StateMachineDefinitionException {
+        return new StateMachineImpl(definition, new ReentrantStrategy());
+    }
+    
     public static StateMachine newReentrant(Object instance) throws StateMachineDefinitionException {
-        return new ReentrantStateMachine(processAnnotatedController(instance));
+        return new StateMachineImpl(processAnnotatedController(instance), new ReentrantStrategy());
     }
 
+    public static StateMachine newNonReentrant(StateMachineDefinition definition) throws StateMachineDefinitionException {
+        return new StateMachineImpl(definition, new NonReentrantStrategy());
+    }
+    
     public static StateMachine newNonReentrant(Object instance) throws StateMachineDefinitionException {
-        return new NonReentrantStateMachine(processAnnotatedController(instance));
+        return new StateMachineImpl(processAnnotatedController(instance), new NonReentrantStrategy());
     }
 
     static void checkClassAnnotation(StateMachineDefinition definition, Object instance)

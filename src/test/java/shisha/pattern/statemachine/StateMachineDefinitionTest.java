@@ -15,9 +15,9 @@
  */
 package shisha.pattern.statemachine;
 
-import static junit.framework.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
@@ -25,9 +25,9 @@ import java.util.List;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import shisha.statemachine.StateMachineDefinition;
+import shisha.statemachine.StateMachine;
 import shisha.statemachine.StateMachineDefinitionImpl;
-import shisha.statemachine.StateMachineImpl;
+import shisha.statemachine.StateMachines;
 import shisha.statemachine.TransitionController;
 import shisha.statemachine.exceptions.ConstraintException;
 import shisha.statemachine.exceptions.EventAlreadyExistsException;
@@ -36,7 +36,6 @@ import shisha.statemachine.exceptions.StateMachineDefinitionException;
 import shisha.statemachine.exceptions.StateMachineException;
 import shisha.statemachine.exceptions.StateNotDefinedException;
 import shisha.statemachine.exceptions.TransitionNotDefinedException;
-import shisha.statemachine.impl.NonReentrantStateMachine;
 
 public class StateMachineDefinitionTest {
     public static String STATE_A = "STATE_A";
@@ -223,10 +222,9 @@ public class StateMachineDefinitionTest {
     }
 
     @Test(expectedExceptions = TransitionNotDefinedException.class)
-    public void testNonDefinedTransitions() throws StateMachineException {
-        StateMachineDefinition definition = createMachineDefinition();
-        StateMachineImpl sm = new NonReentrantStateMachine(definition);
-
+    public void testNonDefinedTransitions() throws StateMachineException, Exception {
+        StateMachineDefinitionImpl definition = createMachineDefinition();
+        StateMachine sm = StateMachines.newNonReentrant(definition);
         sm.processEvent(EVENT_AB, null);
         sm.processEvent(EVENT_BB, null);
         sm.processEvent(EVENT_BC, null);
