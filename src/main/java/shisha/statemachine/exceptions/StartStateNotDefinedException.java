@@ -1,5 +1,5 @@
 /*  
- * Copyright 2012 xavi.ferro
+ * Copyright 2012-2013 xavi.ferro
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,13 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-package shisha.pattern.statemachine.annotated.util;
+ */  
+package shisha.statemachine.exceptions;
 
-import shisha.statemachine.annotations.AStateMachine;
-import shisha.statemachine.annotations.Event;
-
-@AStateMachine
-public class IllegalEventAnnotation_02 {
-    @Event private final static String EVENT = "EVENT";
+public class StartStateNotDefinedException extends StateMachineDefinitionException {
+    private static final long serialVersionUID = 1L;
+    public StartStateNotDefinedException(String msg) {
+        super(msg);
+    }
 }

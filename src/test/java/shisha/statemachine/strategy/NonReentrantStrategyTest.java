@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package shisha.pattern.statemachine.strategy;
+package shisha.statemachine.strategy;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

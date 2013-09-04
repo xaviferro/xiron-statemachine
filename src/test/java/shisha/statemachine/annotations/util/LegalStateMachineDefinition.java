@@ -1,4 +1,4 @@
-package shisha.pattern.statemachine.util;
+package shisha.statemachine.annotations.util;
 
 import shisha.statemachine.EventInfo;
 import shisha.statemachine.TransitionInfo;

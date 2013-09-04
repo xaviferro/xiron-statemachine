@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */   
-package shisha.pattern.statemachine.annotated.util;
+package shisha.statemachine.annotations.util;
 
 import shisha.statemachine.annotations.AStateMachine;
 import shisha.statemachine.annotations.State;

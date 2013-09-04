@@ -13,15 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */   
-package shisha.pattern.statemachine.annotated.util;
+package shisha.statemachine.annotations.util;
 
 import shisha.statemachine.annotations.AStateMachine;
+import shisha.statemachine.annotations.Event;
 import shisha.statemachine.annotations.State;
+import shisha.statemachine.annotations.Transition;
 
 /**
- * State should be a public static String
+ * Wrong parameter names is transition
  */
 @AStateMachine
-public class IllegalStateAnnotation_02 {
-    @State public static final int STATE_A = 1;
+public class IllegalTransitionAnnotation_01 {
+    @State(isStart=true) public static final String STATE_A = "STATE_A";
+    @State public static final String STATE_B = "STATE_B";
+    
+    @Event public static final String EVENT_AB = "EVENT_AB";
+    
+    @Transition(source=STATE_A,target=STATE_B,event=EVENT_AB)
+    public void t() { }
 }

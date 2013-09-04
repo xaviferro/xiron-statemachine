@@ -77,10 +77,10 @@ public class StateMachines {
     static StateMachineDefinitionImpl checkFieldAnnotations(StateMachineDefinitionImpl stateMachineDefinition,
             Object instance) throws StateMachineDefinitionException {
         Class<?> clazz = instance.getClass();
-
+        
         // Let's process the events and states first.
         // We look for the State, StartState and Event annotations
-        for (Field field : clazz.getFields()) {
+        for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(State.class))
                 checkStateAnnotation(instance, stateMachineDefinition, field, field.getAnnotation(State.class));
 

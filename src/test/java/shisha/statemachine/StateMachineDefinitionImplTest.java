@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package shisha.pattern.statemachine;
+package shisha.statemachine;
 
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
@@ -37,7 +37,7 @@ import shisha.statemachine.exceptions.StateMachineException;
 import shisha.statemachine.exceptions.StateNotDefinedException;
 import shisha.statemachine.exceptions.TransitionNotDefinedException;
 
-public class StateMachineDefinitionTest {
+public class StateMachineDefinitionImplTest {
     public static String STATE_A = "STATE_A";
     public static String STATE_B = "STATE_B";
     public static String STATE_C = "STATE_C";
@@ -215,8 +215,9 @@ public class StateMachineDefinitionTest {
         definition.defineTransition(STATE_C, EVENT_CC, STATE_B, transitionController);
     }
 
+    @Test
     public void testAddingReflexiveTransitionToAFinalState() throws StateMachineDefinitionException {
-        definition.defineTransition(STATE_C, STATE_C, EVENT_CC, transitionController);
+        definition.defineTransition(STATE_C, EVENT_CC, STATE_C, transitionController);
 
         assertTrue(definition.getApplicableEvents(STATE_C).contains(EVENT_CC));
     }
