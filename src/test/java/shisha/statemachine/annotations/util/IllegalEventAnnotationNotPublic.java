@@ -12,17 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */   
+ */
 package shisha.statemachine.annotations.util;
 
 import shisha.statemachine.annotations.AStateMachine;
 import shisha.statemachine.annotations.Event;
 
-
-/**
- * Event is not final
- */
 @AStateMachine
-public class IllegalEventAnnotation_01 {
-    @Event public static String EVENT_AB = "EVENT_AB";
+public class IllegalEventAnnotationNotPublic {
+    @Event private final static String EVENT = "EVENT";
 }

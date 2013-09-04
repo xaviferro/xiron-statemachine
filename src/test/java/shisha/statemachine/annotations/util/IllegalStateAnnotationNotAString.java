@@ -16,20 +16,12 @@
 package shisha.statemachine.annotations.util;
 
 import shisha.statemachine.annotations.AStateMachine;
-import shisha.statemachine.annotations.Event;
 import shisha.statemachine.annotations.State;
-import shisha.statemachine.annotations.Transition;
 
 /**
- * Wrong parameter names is transition
+ * State should be a public static String
  */
 @AStateMachine
-public class IllegalTransitionAnnotation_01 {
-    @State(isStart=true) public static final String STATE_A = "STATE_A";
-    @State public static final String STATE_B = "STATE_B";
-    
-    @Event public static final String EVENT_AB = "EVENT_AB";
-    
-    @Transition(source=STATE_A,target=STATE_B,event=EVENT_AB)
-    public void t() { }
+public class IllegalStateAnnotationNotAString {
+    @State public static final int STATE_A = 1;
 }

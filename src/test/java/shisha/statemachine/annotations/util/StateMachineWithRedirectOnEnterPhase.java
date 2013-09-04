@@ -1,7 +1,6 @@
 package shisha.statemachine.annotations.util;
 
-import junit.framework.Assert;
-
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import shisha.statemachine.EventInfo;

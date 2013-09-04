@@ -10,7 +10,7 @@ import shisha.statemachine.annotations.Transition;
 import shisha.statemachine.annotations.Transitions;
 
 @AStateMachine
-public class LegalStateMachineDefinition {
+public class StateMachineWithRedirectInEnterPhase {
     @State(isStart=true) public static final String STATE_A = "STATE_A";
     @State public static final String STATE_B = "STATE_B";
     @State public static final String STATE_COND = "STATE_COND";
