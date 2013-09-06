@@ -24,7 +24,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 /**
  * Defines a transition enter state phase. Methods annotated with it
- * might have the same contract as the {@link EnterStateController}
+ * might have the same contract as the {@link EnterStateController}.
+ * 
+ * <p>There is only one difference with the contract: if the method returns
+ * void, the state machine execution will assume we don't want to forward
+ * to any other state.
  */
 public @interface EnterState {
     String value();

@@ -135,9 +135,10 @@ public class StateMachines {
 
         // Second, we check the return type is correct
         Class<?> resultType = method.getReturnType();
-        if (resultType == null || !resultType.equals(EventInfo.class))
+        if (resultType == null || (!resultType.equals(EventInfo.class) && !("void".equals(resultType.getName())))) {
             throw new IllegalTransitionAnnotationException("Transition for method " + method.getName()
-                    + " is not well defined. Enter phase must return a EventInfo");
+                    + " is not well defined. Enter phase must return a EventInfo or void");
+        }
 
         definition.defineEnterState(ann, method, instance);
     }
@@ -148,9 +149,10 @@ public class StateMachines {
         checkGenericTransitionHasTheRightParameters(method);
         // Second, we check the return type is correct
         Class<?> resultType = method.getReturnType();
-        if (resultType == null || !resultType.equals(Boolean.class))
+        if (resultType == null || (!resultType.equals(Boolean.class) && !("void".equals(resultType.getName())))) {
             throw new IllegalTransitionAnnotationException("Transition for method " + method.getName()
-                    + " is not well defined. Exit phase must return a boolean");
+                    + " is not well defined. Exit phase must return a boolean or void");
+        }
         
         definition.defineExitState(ann, method, instance);
     }

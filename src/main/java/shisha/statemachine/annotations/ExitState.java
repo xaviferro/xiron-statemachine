@@ -25,6 +25,10 @@ import java.lang.annotation.Target;
 /**
  * Defines a transition enter state phase. Methods annotated with it
  * might have the same contract as the {@link ExitStateController}
+ * 
+ * <p>It allows defining the method as void, though. It means that
+ * the phase will return a <code>true</code>, which means the transition
+ * continues without problems.
  */
 public @interface ExitState { 
     public String value();

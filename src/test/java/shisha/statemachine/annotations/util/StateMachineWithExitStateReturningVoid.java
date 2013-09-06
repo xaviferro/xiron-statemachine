@@ -1,5 +1,5 @@
 /*  
- * Copyright 2012 xavi.ferro
+ * Copyright 2012-2013 xavi.ferro
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,24 @@
  */
 package shisha.statemachine.annotations.util;
 
+import shisha.statemachine.TransitionInfo;
 import shisha.statemachine.annotations.AStateMachine;
 import shisha.statemachine.annotations.Event;
+import shisha.statemachine.annotations.ExitState;
 import shisha.statemachine.annotations.State;
+import shisha.statemachine.annotations.Transition;
 
 @AStateMachine
-public class IllegalEventAnnotationNotPublic {
-    @State(isStart=true) public final static String STATE = "STATE";
-    @Event private final static String EVENT = "EVENT";
+public class StateMachineWithExitStateReturningVoid {
+    @State(isStart=true) public static final String STATE_A = "STATE_A";
+    @State public static final String STATE_B = "STATE_B";
+    @Event public static final String EVENT_AB = "AB";
+    
+    @Transition(source = STATE_A, target = STATE_B, event = EVENT_AB)
+    public void noop(TransitionInfo info) { }
+    
+    @ExitState(STATE_A)
+    public void enterState(TransitionInfo info) {
+        System.out.println("Exiting A");
+    }
 }

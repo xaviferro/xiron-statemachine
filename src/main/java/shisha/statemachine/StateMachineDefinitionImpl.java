@@ -225,6 +225,8 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
                 Boolean result = null;
                 try {
                     result = (Boolean) method.invoke(callee, event);
+                    if (result == null)
+                        result = true; // We might be able to define void methods
                 } catch (IllegalAccessException e) {
                     l.error("This should never happen");
                 } catch (IllegalArgumentException e) {
@@ -384,25 +386,6 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
             sb.append("<Event>").append(event).append("</Event>").append(NEWLINE);
         }
         sb.append("</Events>").append(NEWLINE);
-
-        /*
-         * sb.append("<Transitions>").append(NEWLINE); for (State state :
-         * states.values()) { HashMap<String, TransitionTarget> txs =
-         * state.getTransitions(); for (String event : txs.keySet()) {
-         * TransitionTarget target = txs.get(event);
-         * sb.append("<Transition ").append
-         * ("source=\"").append(state.getName()).
-         * append("\" ").append("event=\"")
-         * .append(event).append("\" ").append("target=\""
-         * ).append(target.getState()).append("\"")
-         * .append(" />").append(NEWLINE); } if (state.getEnterStateController()
-         * != null)
-         * sb.append("<EnterState state=\"").append(state.getName()).append
-         * ("\" />"); if (state.getExitStateController() != null)
-         * sb.append("<ExitState state=\""
-         * ).append(state.getName()).append("\" />"); }
-         * sb.append("</Transitions>").append(NEWLINE);
-         */
 
         sb.append("</StateMachineDefinition>");
         return sb.toString();
