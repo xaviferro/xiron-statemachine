@@ -225,6 +225,8 @@ public class StateMachineDefinitionImpl implements StateMachineDefinition {
                 Boolean result = null;
                 try {
                     result = (Boolean) method.invoke(callee, event);
+                    if (result == null)
+                        result = true; // We might be able to define void methods
                 } catch (IllegalAccessException e) {
                     l.error("This should never happen");
                 } catch (IllegalArgumentException e) {
